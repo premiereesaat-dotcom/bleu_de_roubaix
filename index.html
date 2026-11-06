@@ -105,7 +105,12 @@ td select{width:100%}
 .nt .tube span{position:absolute;left:0;right:0;bottom:0;height:70%}
 .nt .tube[aria-pressed="true"]{outline:3px solid var(--accent);outline-offset:3px}
 .nt input{width:80px;font-size:.8rem;padding:4px 5px;text-align:center;background:#fff;color:#18202C;border-color:#C6CED8}
-.nt.myst input:first-of-type{font-weight:700}
+.nt.myst .tube{cursor:default;outline:2px dashed #8A5A10;outline-offset:4px}
+.nt .mlab{font-size:.8rem;font-weight:700;color:#8A5A10;text-align:center}
+.nt .ctl{display:flex;gap:4px}
+.nt .ctl button{font:inherit;font-size:.8rem;padding:3px 9px;border:1px solid #B9C1CB;background:#F4F6F8;color:#18202C;border-radius:4px;cursor:pointer}
+.palette button.white{background:#FFFFFF}
+.palette .pl{font-size:.75rem;font-weight:700;color:var(--muted);text-align:center}
 .palette{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
 .palette button{width:30px;height:30px;border-radius:50%;border:2px solid #7C8794;cursor:pointer}
 .palette input[type=color]{width:44px;height:32px;padding:2px}
@@ -139,7 +144,7 @@ footer{font-size:.8rem;color:var(--muted);text-align:center}
 
   <div class="labo-link">
     <div><h3>Le labo virtuel</h3><p class="hint">Gardez-le ouvert dans un autre onglet pendant toute la séance.</p></div>
-    <a href="https://premiereesaat-dotcom.github.io/bleu_de_roubaix/Labo_virtuel_Bleu_de_Rx.html" target="_blank" rel="noopener">Ouvrir le labo ↗</a>
+    <a href="https://premiereesaat-dotcom.github.io/bleu_de_roubaix/Labo_virtuel_Bleu_de_Roubaix.html" target="_blank" rel="noopener">Ouvrir le labo ↗</a>
   </div>
 
   <div class="tblwrap"><table>
@@ -275,7 +280,7 @@ footer{font-size:.8rem;color:var(--muted);text-align:center}
 
     <div class="q">
       <p class="qh"><b>C3</b>Coloriez votre nuancier.</p>
-      <p class="hint">Cliquez sur un tube, puis sur une couleur (ou composez la vôtre). Écrivez sous chaque tube son nom et sa concentration, dans l'ordre observé. Le dernier emplacement est pour le bain de 1912.</p>
+      <p class="hint">Cliquez sur un tube, puis sur l'une des cinq teintes observées dans le labo : elles sont proposées dans le désordre, le blanc sert à effacer. Écrivez sous chaque tube son nom et sa concentration, du plus pâle au plus foncé. Placez enfin le tube du bain de 1912, déjà coloré, à sa place avec les flèches ◀ ▶.</p>
       <div class="palette" id="palette" aria-label="Palette"></div>
       <div class="nuancier" id="nuancier"></div>
     </div>
@@ -460,20 +465,26 @@ $('#c1').innerHTML=[1,2,3,4,5].map(n=>`<tr><td><b>S${n}</b></td>
   <td><input type="checkbox" data-k="c1_x${n}" data-label="C1 · S${n} refaite" aria-label="S${n} refaite"></td></tr>`).join('');
 
 /* ---------- C3 nuancier ---------- */
-const PAL=["#F2F8FE","#D7EAFA","#BCDCF6","#9FCCF2","#82BCEE","#64A9E8","#4895DE","#2F80D2","#1E6BC0","#155AA8","#0F478A"];
-$('#palette').innerHTML=PAL.map(c=>`<button style="background:${c}" data-pal="${c}" aria-label="Teinte ${c}"></button>`).join('')+`<label class="hint" style="display:flex;gap:6px;align-items:center">Autre <input type="color" id="pcol" value="#64A9E8"></label>`;
-const NT=6; let selTube=0;
+// cinq teintes du labo (10, 20, 30, 40, 50 g/L), proposées dans le désordre, plus le blanc
+const PAL=["#3E96E4","#9CD3F6","#196AD4","#63B2ED","#277EDC","#FFFFFF"];
+const BAIN="#4EA3E9";
+$('#palette').innerHTML=PAL.map((c,k)=>`<div style="display:grid;gap:3px;justify-items:center"><button class="${c==='#FFFFFF'?'white':''}" style="background:${c}" data-pal="${c}" aria-label="${c==='#FFFFFF'?'Blanc, effacer la couleur':'Teinte '+'ABCDE'[k]}"></button><span class="pl">${c==='#FFFFFF'?'blanc':'ABCDE'[k]}</span></div>`).join('');
+const NT=5; let selTube=0;
+function bainPos(){ const p=+store.bainPos; return isNaN(p)?NT:Math.max(0,Math.min(NT,p)); }
+function slots(){ const n=store.nuancier||{}; const arr=Array.from({length:NT},(_,i)=>({i,...(n[i]||{})})); arr.splice(bainPos(),0,{myst:true}); return arr; }
 function renderNuancier(){
-  const n=store.nuancier||{};
-  $('#nuancier').innerHTML=Array.from({length:NT},(_,i)=>{ const t=n[i]||{}; const myst=i===NT-1;
-    return `<div class="nt ${myst?'myst':''}"><button class="tube" data-tube="${i}" aria-pressed="${i===selTube}" aria-label="Tube ${i+1}"><span style="background:${t.c||'transparent'}"></span></button>
-    <input data-nt="${i}" data-f="n" value="${esc(t.n|| (myst?'Bain 1912':''))}" placeholder="nom" aria-label="Nom du tube ${i+1}">
-    <input data-nt="${i}" data-f="g" value="${esc(t.g||'')}" placeholder="… g/L" aria-label="Concentration du tube ${i+1}"></div>`; }).join('');
+  $('#nuancier').innerHTML=slots().map(t=> t.myst
+   ? `<div class="nt myst"><div class="tube" aria-label="Bain de 1912"><span style="background:${BAIN}"></span></div><div class="mlab">Bain 1912</div>
+      <div class="ctl"><button data-bm="-1" aria-label="Déplacer le bain vers la gauche">◀</button><button data-bm="1" aria-label="Déplacer le bain vers la droite">▶</button></div></div>`
+   : `<div class="nt"><button class="tube" data-tube="${t.i}" aria-pressed="${t.i===selTube}" aria-label="Tube ${t.i+1}"><span style="background:${t.c||'transparent'}"></span></button>
+      <input data-nt="${t.i}" data-f="n" value="${esc(t.n||'')}" placeholder="nom" aria-label="Nom du tube ${t.i+1}">
+      <input data-nt="${t.i}" data-f="g" value="${esc(t.g||'')}" placeholder="… g/L" aria-label="Concentration du tube ${t.i+1}"></div>`).join('');
 }
 function setTube(i,patch){ store.nuancier=store.nuancier||{}; store.nuancier[i]=Object.assign({},store.nuancier[i],patch); persist(); }
-$('#palette').addEventListener('click',e=>{ const b=e.target.closest('[data-pal]'); if(!b) return; setTube(selTube,{c:b.dataset.pal}); renderNuancier(); });
-$('#pcol').addEventListener('input',e=>{ setTube(selTube,{c:e.target.value}); renderNuancier(); });
-$('#nuancier').addEventListener('click',e=>{ const b=e.target.closest('[data-tube]'); if(!b) return; selTube=+b.dataset.tube; renderNuancier(); });
+$('#palette').addEventListener('click',e=>{ const b=e.target.closest('[data-pal]'); if(!b) return; setTube(selTube,{c:b.dataset.pal==='#FFFFFF'?'':b.dataset.pal}); if(selTube<NT-1 && b.dataset.pal!=='#FFFFFF') selTube++; renderNuancier(); });
+$('#nuancier').addEventListener('click',e=>{
+  const m=e.target.closest('[data-bm]'); if(m){ store.bainPos=Math.max(0,Math.min(NT,bainPos()+(+m.dataset.bm))); persist(); renderNuancier(); $(`[data-bm="${m.dataset.bm}"]`)?.focus(); return; }
+  const b=e.target.closest('[data-tube]'); if(!b) return; selTube=+b.dataset.tube; renderNuancier(); });
 $('#nuancier').addEventListener('input',e=>{ const t=e.target.closest('[data-nt]'); if(!t) return; setTube(+t.dataset.nt,{[t.dataset.f]:t.value}); });
 
 /* ---------- D1 ---------- */
@@ -519,11 +530,11 @@ document.addEventListener('click',e=>{ const b=e.target.closest('[data-check]');
 /* ---------- progression et récapitulatif ---------- */
 function fieldsDone(){
   const keys=new Set($$('[data-k]').map(e=>e.dataset.k).filter(k=>!/^c1_x|^plus$|^nom$|^prenom$|^classe$/.test(k)));
-  let total=keys.size+8+NT+2, done=0;
+  let total=keys.size+8+NT+3, done=0;
   keys.forEach(k=>{ const v=store[k]; if(v!=null && v!=='' && v!==false) done++; });
   done+=Object.keys(store.drawn||{}).length;
   const n=store.nuancier||{}; for(let i=0;i<NT;i++) if(n[i]&&n[i].c) done++;
-  if(store.a2) done++; if(store.b3) done++;
+  if(store.a2) done++; if(store.b3) done++; if(store.bainPos!=null) done++;
   return [done,total];
 }
 function progress(){ const [d,t]=fieldsDone(); const p=Math.round(100*d/t); $('#pfill').style.width=p+'%'; $('#ptxt').textContent=p+' %'; }
@@ -544,13 +555,12 @@ function textExport(){
   L.forEach(([l,v])=>{ if(!/^(Nom|Prénom|Classe)$/.test(l)) lines.push(l+' : '+v); });
   lines.push('A2 · Ordre des gestes : '+getOrder('a2').join(' – '));
   lines.push('B3 · Ordre prévu : '+getOrder('b3').join(' < '));
-  const n=store.nuancier||{}; lines.push('C3 · Nuancier : '+Array.from({length:NT},(_,i)=>(n[i]?.n||(i===NT-1?'Bain 1912':'?'))+' ('+(n[i]?.g||'…')+')').join(' | '));
+  lines.push('C3 · Nuancier : '+slots().map(t=>t.myst?'[Bain 1912]':(t.n||'?')+' ('+(t.g||'…')+')').join(' | '));
   return lines.join('\n');
 }
 function htmlExport(){
   const L=answersList().filter(([l])=>!/^(Nom|Prénom|Classe)$/.test(l));
-  const n=store.nuancier||{};
-  const tubes=Array.from({length:NT},(_,i)=>`<div style="display:inline-block;text-align:center;margin:0 8px;width:80px"><div style="width:30px;height:110px;margin:auto;border:2px solid #7C8794;border-top:0;border-radius:0 0 15px 15px;background:linear-gradient(to top, ${n[i]?.c||'#fff'} 70%, #fff 70%)"></div><div style="font-size:12px;font-weight:700">${esc(n[i]?.n||(i===NT-1?'Bain 1912':''))}</div><div style="font-size:12px">${esc(n[i]?.g||'')}</div></div>`).join('');
+  const tubes=slots().map(t=>`<div style="display:inline-block;text-align:center;margin:0 8px;width:80px"><div style="width:30px;height:110px;margin:auto;border:2px ${t.myst?'dashed #8A5A10':'solid #7C8794'};border-top:0;border-radius:0 0 15px 15px;background:linear-gradient(to top, ${t.myst?BAIN:(t.c||'#fff')} 70%, #fff 70%)"></div><div style="font-size:12px;font-weight:700">${esc(t.myst?'Bain 1912':(t.n||''))}</div><div style="font-size:12px">${esc(t.myst?'':(t.g||''))}</div></div>`).join('');
   const draws=STEPS.map((s,i)=>`<figure style="margin:0;border:1px solid #C6CED8"><img src="${pads[i].cv.toDataURL('image/png')}" style="width:100%;display:block" alt="Étape ${i+1}"><figcaption style="font-size:12px;padding:4px 6px">${i+1}. ${esc(s)}</figcaption></figure>`).join('');
   const rows=L.map(([l,v])=>`<tr><td style="padding:5px 8px;border-bottom:1px solid #ddd;width:45%;color:#5A6573">${esc(l)}</td><td style="padding:5px 8px;border-bottom:1px solid #ddd;white-space:pre-wrap">${esc(v)}</td></tr>`).join('');
   return `<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Bleu de Roubaix · ${esc(store.prenom||'')} ${esc(store.nom||'')}</title></head>
