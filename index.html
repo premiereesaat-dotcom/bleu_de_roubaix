@@ -340,12 +340,12 @@ footer{font-size:.8rem;color:var(--muted);text-align:center}
       <div class="done">
         <p id="recap">…</p>
         <div class="row">
-          <button class="b main" id="dl">Enregistrer ma copie (fichier HTML)</button>
-          <button class="b" id="copy">Copier mes réponses (texte)</button>
+          <button class="b main" id="dl">Enregistrer ma copie en PDF</button>
+          <button class="b" id="dlh">Enregistrer en HTML</button>
           <button class="b" id="wipe" style="border-color:var(--brick);color:var(--brick);background:transparent">Effacer toutes mes réponses</button>
           <span class="fb" id="fb-dl"></span>
         </div>
-        <p class="hint">Déposez le fichier enregistré dans le travail à faire sur Pronote, puis répondez au QCM « Le Bleu de Roubaix » (toutes les questions sont obligatoires). Si l'enregistrement n'est pas possible sur votre appareil, copiez vos réponses dans un document et faites des captures d'écran de vos dessins et de votre nuancier.</p>
+        <p class="hint">Le PDF contient vos réponses, vos huit schémas et votre nuancier. Déposez-le dans le travail à faire sur Pronote, puis répondez au QCM « Le Bleu de Roubaix » (toutes les questions sont obligatoires). « Enregistrer en HTML » sert de solution de secours si le PDF ne se crée pas.</p>
       </div>
     </div>
 
@@ -356,6 +356,7 @@ footer{font-size:.8rem;color:var(--muted);text-align:center}
   <footer>Vos réponses restent sur cet appareil et dans ce navigateur. Elles ne sont envoyées à personne tant que vous ne déposez pas votre copie sur Pronote.</footer>
 </div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script>
 (function(){
 const ANS = JSON.parse(decodeURIComponent(escape(atob("eyJhMSI6IFsiQ291cGVsbGUgZGUgcGVzw6llIiwgIkJhbGFuY2UiLCAiU3BhdHVsZSIsICJFbnRvbm5vaXIgw6Agc29saWRlIiwgIkZpb2xlIGphdWfDqWUiLCAiUGlzc2V0dGUiLCAiVHViZSDDoCBlc3NhaXMiLCAiQsOpY2hlciJdLCAiYTIiOiBbIkIiLCAiSCIsICJEIiwgIkciLCAiRiIsICJBIiwgIkMiLCAiRSJdLCAiYjEiOiBbMC4xLCAwLjA1LCAwLjI1LCA1MDBdLCAiYjIiOiB7ImIyX3YxIjogMC4xLCAiYjJfbTEiOiAxLCAiYjJfYzIiOiAyMCwgImIyX3YyIjogMC4wNSwgImIyX3YzIjogMC4wNSwgImIyX20zIjogMS41LCAiYjJfYzQiOiA0MCwgImIyX3Y0IjogMC4xLCAiYjJfdjUiOiAwLjEsICJiMl9tNSI6IDV9LCAiYjMiOiBbIlMxIiwgIlMyIiwgIlMzIiwgIlM0IiwgIlM1Il0sICJiNCI6ICJTMiBwbHVzIGZvbmPDqWUiLCAiYjUiOiAyOSwgImI1X3QiOiAicGx1cyBjbGFpcmUgcXVlIHByw6l2dSIsICJjNCI6IFsyMCwgMzBdLCAiYzYiOiAyNSwgImQxIjogWyJzb2x1dMOpIiwgInNvbHZhbnQiLCAiZGlzc29sdXRpb24iLCAic29sdXRpb24iLCAidm9sdW1lIiwgImZpb2xlIGphdWfDqWUiLCAidHJhaXQgZGUgamF1Z2UiLCAiaG9tb2fDqW7DqWlzZXIiLCAibWFzc2UiLCAiZy9MIl19"))));
@@ -579,19 +580,96 @@ function htmlExport(){
 }
 let downloads=null;
 const STANDALONE = !(window.claude && window.claude.use);
-(async()=>{ if(STANDALONE) return; try{ downloads = await window.claude.use('downloads'); }catch(e){ downloads=null; } if(!downloads) $('#dl').hidden=true; })();
-function blobSave(name,data){ const u=URL.createObjectURL(new Blob([data],{type:'text/html'})); const a=document.createElement('a'); a.href=u; a.download=name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(u),4000); }
+(async()=>{ if(STANDALONE) return; try{ downloads = await window.claude.use('downloads'); }catch(e){ downloads=null; } if(!downloads){ $('#dl').hidden=true; $('#dlh').hidden=true; } })();
+function blobSave(name,data,type){ const u=URL.createObjectURL(data instanceof Blob?data:new Blob([data],{type})); const a=document.createElement('a'); a.href=u; a.download=name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(u),4000); }
+function baseName(){ return 'Bleu_de_Roubaix_'+((store.nom||'NOM')+'_'+(store.prenom||'Prenom')).normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^A-Za-z0-9_-]+/g,'_'); }
+
+/* --- PDF --- */
+// les polices standard du PDF ne connaissent que l'alphabet latin : on remplace les quelques signes absents
+function pdfTxt(t){ return String(t??'').replace(/≈/g,'~').replace(/→/g,'->').replace(/[◀]/g,'<').replace(/[▶]/g,'>').replace(/[₀-₉]/g,c=>'0123456789'[c.charCodeAt(0)-0x2080]).replace(/[  ]/g,' ').replace(/[^\x09\x0a\x20-\x7e\xa0-\xffŒœŠšŸŽžƒˆ˜–—‘’‚“”„†‡•…‰‹›€™]/g,'?'); }
+function hexRgb(h){ const m=/^#?([0-9a-f]{6})$/i.exec(h||''); if(!m) return [255,255,255]; const n=parseInt(m[1],16); return [n>>16&255,n>>8&255,n&255]; }
+function pdfExport(){
+  const { jsPDF } = window.jspdf; const doc=new jsPDF({unit:'mm',format:'a4'});
+  const W=210, M=15, CW=W-2*M, BOT=282; let y=M;
+  const INK=[24,32,44], MUT=[90,101,115], BLUE=[30,102,194], BRICK=[162,63,47];
+  const ensure=h=>{ if(y+h>BOT){ doc.addPage(); y=M; } };
+  const h2=t=>{ ensure(14); y+=4; doc.setFont('helvetica','bold'); doc.setFontSize(13); doc.setTextColor(...BLUE); doc.text(pdfTxt(t),M,y); y+=2; doc.setDrawColor(...BLUE); doc.setLineWidth(.4); doc.line(M,y,W-M,y); y+=6; };
+  const para=(t,size=10,col=INK,style='normal')=>{ doc.setFont('helvetica',style); doc.setFontSize(size); doc.setTextColor(...col); const L=doc.splitTextToSize(pdfTxt(t),CW); L.forEach(l=>{ ensure(size*.45); doc.text(l,M,y); y+=size*.42; }); };
+  const qa=(l,v)=>{ doc.setFontSize(8.5); const L1=doc.splitTextToSize(pdfTxt(l),CW); doc.setFontSize(10); const L2=doc.splitTextToSize(pdfTxt(v),CW-4);
+    ensure(L1.length*3.8+Math.min(L2.length,3)*4.3+2);
+    doc.setFont('helvetica','bold'); doc.setFontSize(8.5); doc.setTextColor(...MUT); L1.forEach(x=>{ doc.text(x,M,y); y+=3.8; });
+    doc.setFont('helvetica','normal'); doc.setFontSize(10); doc.setTextColor(...(v==='—'?BRICK:INK)); L2.forEach(x=>{ ensure(4.3); doc.text(x,M+4,y); y+=4.3; }); y+=1.8; };
+  // en-tête
+  doc.setFillColor(...INK); doc.rect(0,0,W,24,'F');
+  doc.setTextColor(255,255,255); doc.setFont('helvetica','bold'); doc.setFontSize(20); doc.text('LE BLEU DE ROUBAIX',M,13);
+  doc.setFont('helvetica','normal'); doc.setFontSize(9); doc.text(pdfTxt('ESAAT Roubaix · Seconde · Physique-chimie · Concentration en masse'),M,19.5);
+  y=33; doc.setTextColor(...INK); doc.setFont('helvetica','bold'); doc.setFontSize(12);
+  doc.text(pdfTxt(((store.prenom||'Prénom ?')+' '+(store.nom||'NOM ?')).trim()+'   ·   '+(store.classe||'classe ?')),M,y);
+  doc.setFont('helvetica','normal'); doc.setFontSize(9); doc.setTextColor(...MUT); doc.text(pdfTxt('Copie enregistrée le '+new Date().toLocaleString('fr-FR')),W-M,y,{align:'right'}); y+=4;
+  const L=answersList().filter(([l])=>!/^(Nom|Prénom|Classe)$/.test(l));
+  const part=pre=>L.filter(([l])=>pre.test(l));
+  // A
+  h2('A · Le protocole');
+  part(/^A1/).forEach(([l,v])=>qa(l.replace(/^A1 · /,'A1 · '),v));
+  qa('A2 · Ordre des gestes', getOrder('a2').join(' – '));
+  part(/^A4/).forEach(([l,v])=>qa(l,v));
+  // A3 dessins : grille 2 colonnes
+  h2('A3 · Schémas du protocole');
+  const gw=(CW-6)/2, gh=gw*0.75;
+  STEPS.forEach((st,i)=>{ const col=i%2; if(col===0) ensure(gh+11);
+    const x=M+col*(gw+6); const img=pads[i].cv.toDataURL('image/jpeg',0.82);
+    doc.setDrawColor(198,206,216); doc.setLineWidth(.3); doc.addImage(img,'JPEG',x,y,gw,gh); doc.rect(x,y,gw,gh);
+    doc.setFont('helvetica','bold'); doc.setFontSize(8.5); doc.setTextColor(...BLUE); doc.text(String(i+1),x,y+gh+4);
+    doc.setFont('helvetica','normal'); doc.setTextColor(...MUT); doc.setFontSize(7.5); doc.text(doc.splitTextToSize(pdfTxt(st),gw-6).slice(0,2),x+4,y+gh+4);
+    if(col===1||i===STEPS.length-1) y+=gh+11; });
+  // B
+  h2('B · Les calculs');
+  part(/^B[12]/).forEach(([l,v])=>qa(l,v));
+  qa('B3 · Ordre prévu, du plus pâle au plus foncé', getOrder('b3').join(' < '));
+  part(/^B[3-6]/).forEach(([l,v])=>qa(l,v));
+  // C
+  h2('C · Le labo');
+  part(/^C[12]/).forEach(([l,v])=>qa(l,v));
+  ensure(52); doc.setFont('helvetica','bold'); doc.setFontSize(8.5); doc.setTextColor(...MUT); doc.text('C3 · Nuancier',M,y); y+=4;
+  const sl=slots(), tw=6, gap=CW/sl.length;
+  doc.setDrawColor(124,135,148); doc.setLineWidth(.4);
+  sl.forEach((t,k)=>{ const cx=M+gap*k+gap/2, top=y, hT=30;
+    const c=t.myst?BAIN:(t.c||'#FFFFFF'); doc.setFillColor(...hexRgb(c));
+    doc.rect(cx-tw/2, top+hT*0.3, tw, hT*0.7-tw/2, 'F'); doc.circle(cx, top+hT-tw/2, tw/2, 'F');
+    if(t.myst){ doc.setDrawColor(138,90,16); doc.setLineDashPattern([1,1],0); } else { doc.setDrawColor(124,135,148); doc.setLineDashPattern([],0); }
+    doc.line(cx-tw/2,top,cx-tw/2,top+hT-tw/2); doc.line(cx+tw/2,top,cx+tw/2,top+hT-tw/2);
+    // fond arrondi : demi-cercle tracé en segments
+    const r=tw/2, cy0=top+hT-r, n=14; let px=cx-r, py=cy0;
+    for(let j=1;j<=n;j++){ const th=Math.PI-Math.PI*j/n; const nx=cx+r*Math.cos(th), ny=cy0+r*Math.sin(th); doc.line(px,py,nx,ny); px=nx; py=ny; }
+    doc.setLineDashPattern([],0);
+    doc.setFont('helvetica','bold'); doc.setFontSize(8); doc.setTextColor(...(t.myst?[138,90,16]:INK)); doc.text(pdfTxt(t.myst?'Bain 1912':(t.n||'?')),cx,top+hT+5,{align:'center'});
+    doc.setFont('helvetica','normal'); doc.setTextColor(...MUT); doc.text(pdfTxt(t.myst?'':(t.g||'')),cx,top+hT+9,{align:'center'}); });
+  y+=44;
+  part(/^C[4-6]/).forEach(([l,v])=>qa(l,v));
+  // D
+  h2('D · Bilan');
+  part(/^D|^Pour aller/).forEach(([l,v])=>qa(l,v));
+  // pied de page
+  const np=doc.getNumberOfPages(); for(let i=1;i<=np;i++){ doc.setPage(i); doc.setFont('helvetica','normal'); doc.setFontSize(8); doc.setTextColor(...MUT);
+    doc.text(pdfTxt(((store.prenom||'')+' '+(store.nom||'')).trim()+' · Le Bleu de Roubaix'),M,292); doc.text(i+' / '+np,W-M,292,{align:'right'}); }
+  return doc;
+}
+async function save(name,data,type){
+  if(STANDALONE){ blobSave(name,data,type); return 'saved'; }
+  if(!downloads) throw {code:'unavailable'};
+  return (await downloads.save({filename:name,data})).status;
+}
+function saveErr(err){ const c=err&&err.code; fb('dl',false, c==='declined'?'Enregistrement annulé.': c==='rate_limited'?'Une fenêtre d\'enregistrement est déjà ouverte.':'Enregistrement impossible sur cet appareil : faites des captures d\'écran de vos réponses et de vos dessins.'); }
 $('#dl').addEventListener('click',async()=>{
-  const name='Bleu_de_Roubaix_'+((store.nom||'NOM')+'_'+(store.prenom||'Prenom')).normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^A-Za-z0-9_-]+/g,'_')+'.html';
-  if(STANDALONE){ try{ blobSave(name,htmlExport()); fb('dl',true,'Copie enregistrée dans vos téléchargements : déposez-la sur Pronote.'); }catch(e){ fb('dl',false,'Enregistrement impossible ici : utilisez « Copier mes réponses ».'); } return; }
-  if(!downloads){ fb('dl',false,'Enregistrement indisponible ici : utilisez « Copier mes réponses ».'); return; }
-  try{ await downloads.save({filename:name,data:htmlExport()}); fb('dl',true,'Copie enregistrée : déposez-la sur Pronote.'); }
-  catch(err){ const c=err&&err.code; fb('dl',false, c==='declined'?'Enregistrement annulé.': c==='rate_limited'?'Une fenêtre d\'enregistrement est déjà ouverte.':'Enregistrement impossible ici : utilisez « Copier mes réponses ».'); if(c==='unavailable'||c==='not_granted'){ $('#dl').hidden=true; } }
+  if(!window.jspdf){ fb('dl',false,'Le module PDF n\'a pas pu se charger (connexion internet ?). Utilisez « Enregistrer en HTML ».'); return; }
+  const b=$('#dl'); b.disabled=true; b.textContent='Création du PDF…';
+  try{ const doc=pdfExport(); const blob=doc.output('blob'); await save(baseName()+'.pdf', STANDALONE?blob:await blob.arrayBuffer(), 'application/pdf'); fb('dl',true,'PDF enregistré : déposez-le sur Pronote.'); }
+  catch(err){ if(err&&err.code) saveErr(err); else { console.error(err); fb('dl',false,'Le PDF n\'a pas pu être créé : utilisez « Enregistrer en HTML ».'); } }
+  finally{ b.disabled=false; b.textContent='Enregistrer ma copie en PDF'; }
 });
-$('#copy').addEventListener('click',async()=>{
-  const t=textExport();
-  try{ await navigator.clipboard.writeText(t); fb('dl',true,'Réponses copiées : collez-les dans un document ou dans Pronote.'); }
-  catch(e){ const ta=document.createElement('textarea'); ta.value=t; ta.style.minHeight='220px'; $('#copy').closest('.done').appendChild(ta); ta.select(); fb('dl',false,'Copie automatique refusée : le texte est sélectionné ci-dessous, copiez-le (Ctrl+C).'); }
+$('#dlh').addEventListener('click',async()=>{
+  try{ await save(baseName()+'.html', htmlExport(), 'text/html'); fb('dl',true,'Copie HTML enregistrée : déposez-la sur Pronote.'); }
+  catch(err){ saveErr(err); }
 });
 
 let wipeT=null;
