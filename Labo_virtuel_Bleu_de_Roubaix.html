@@ -1,0 +1,612 @@
+<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style></head><body><title>Le Bleu de Roubaix</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;800&family=Familjen+Grotesk:wght@400;500;600;700&family=Share+Tech+Mono&display=swap">
+<style>
+/* Layout : paillasse (scène SVG) à gauche, tableau des gestes à droite ; portoir-nuancier et carnet en dessous. Atelier de teinture roubaisien : bleu de cuivre, jaune de gaude, brique. */
+:root{
+  --bg:#ECEFF3; --surface:#FFFFFF; --ink:#18202C; --muted:#5A6573; --line:#C6CED8;
+  --accent:#B7791F; --accent-soft:#F5E6C6; --accent-ink:#1E1606;
+  --brick:#A23F2F; --brick-soft:#F7DED8; --ok:#2E7A4D; --ok-soft:#DDF0E3;
+  --glass:#F4F8FC; --bench:#D9DEE5; --crystal:#1E66C2;
+  --f-display:"Big Shoulders Display", "Arial Narrow", Impact, sans-serif;
+  --f-body:"Familjen Grotesk", "Segoe UI", system-ui, sans-serif;
+  --f-mono:"Share Tech Mono", ui-monospace, "Courier New", monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#10151C; --surface:#18202A; --ink:#E6EBF1; --muted:#9AA6B4; --line:#2E3946;
+  --accent:#E3A73F; --accent-soft:#3A2D14; --accent-ink:#1E1606;
+  --brick:#E5826C; --brick-soft:#3B201B; --ok:#6CC28F; --ok-soft:#173225;
+  --glass:#1F2935; --bench:#242E3A; --crystal:#4A8BE0; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#10151C; --surface:#18202A; --ink:#E6EBF1; --muted:#9AA6B4; --line:#2E3946;
+  --accent:#E3A73F; --accent-soft:#3A2D14; --accent-ink:#1E1606;
+  --brick:#E5826C; --brick-soft:#3B201B; --ok:#6CC28F; --ok-soft:#173225;
+  --glass:#1F2935; --bench:#242E3A; --crystal:#4A8BE0; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.5;
+  padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px));padding-block:20px 48px}
+.wrap{max-width:1180px;margin:0 auto;display:grid;gap:20px}
+h1,h2,h3{font-family:var(--f-display);font-weight:800;letter-spacing:.01em;text-wrap:balance;margin:0;line-height:1}
+h1{font-size:clamp(2.6rem,7vw,4.4rem);text-transform:uppercase}
+h1 em{font-style:normal;color:var(--crystal)}
+h2{font-size:1.7rem;text-transform:uppercase}
+h3{font-size:1.15rem;text-transform:uppercase;letter-spacing:.04em}
+.eyebrow{font-size:.75rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:600}
+p{margin:0}
+header.top{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:24px;align-items:end;border-bottom:3px solid var(--ink);padding-bottom:16px}
+.story{color:var(--ink);max-width:62ch;font-size:.97rem}
+.story strong{color:var(--crystal)}
+@media (max-width:820px){header.top{grid-template-columns:1fr}}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:16px;min-width:0}
+.main{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(0,1fr);gap:20px;align-items:start}
+@media (max-width:900px){.main{grid-template-columns:1fr}}
+.scene-wrap{display:grid;gap:12px}
+.scene{width:100%;height:auto;display:block}
+.statusrow{display:flex;flex-wrap:wrap;gap:8px}
+.chip{font-size:.8rem;padding:3px 10px;border-radius:999px;background:var(--bg);border:1px solid var(--line);color:var(--muted)}
+.chip b{color:var(--ink);font-weight:600}
+.chip.warn{background:var(--brick-soft);border-color:var(--brick);color:var(--brick)}
+.chip.good{background:var(--ok-soft);border-color:var(--ok);color:var(--ok)}
+.zoomrow{display:grid;grid-template-columns:170px minmax(0,1fr);gap:14px;align-items:center}
+@media (max-width:480px){.zoomrow{grid-template-columns:1fr}}
+.zoom{width:170px;height:auto;border:1px solid var(--line);border-radius:6px;background:var(--glass)}
+.seg{display:inline-flex;justify-self:start;width:fit-content;max-width:100%;border:1px solid var(--line);border-radius:6px;overflow:hidden;flex-wrap:wrap}
+.seg button{border:0;border-right:1px solid var(--line);background:var(--surface);color:var(--ink);font:inherit;font-size:.85rem;padding:6px 10px;cursor:pointer}
+.seg button:last-child{border-right:0}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--surface)}
+.gestes{display:grid;gap:14px}
+.grp{display:grid;gap:8px}
+.grp h3{display:flex;justify-content:space-between;align-items:baseline;border-bottom:1px solid var(--line);padding-bottom:4px}
+.grp h3 small{font-family:var(--f-body);font-size:.72rem;letter-spacing:.06em;color:var(--muted);font-weight:500;text-transform:none}
+.btns{display:flex;flex-wrap:wrap;gap:6px}
+.b{font:inherit;font-size:.86rem;font-weight:500;padding:7px 11px;border-radius:5px;border:1px solid var(--line);background:var(--bg);color:var(--ink);cursor:pointer;text-align:left}
+.b:hover{border-color:var(--ink)}
+.b.main-b{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:600}
+.b.ghost{background:transparent}
+.b:focus-visible,.seg button:focus-visible,input:focus-visible{outline:3px solid var(--crystal);outline-offset:2px}
+.field{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.field input{font:inherit;padding:6px 9px;border:1px solid var(--line);border-radius:5px;background:var(--surface);color:var(--ink);width:9em}
+.msg{min-height:3.2em;padding:10px 12px;border-left:4px solid var(--accent);background:var(--accent-soft);border-radius:0 5px 5px 0;font-size:.92rem}
+.msg.warn{border-color:var(--brick);background:var(--brick-soft)}
+.msg.good{border-color:var(--ok);background:var(--ok-soft)}
+.lower{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(0,1fr);gap:20px;align-items:start}
+@media (max-width:900px){.lower{grid-template-columns:1fr}}
+.rackhead{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
+.card{border-radius:6px;padding:18px 10px 10px;transition:background .3s}
+.card.white{background:#FFFFFF;border:1px solid #D8DDE3}
+.card.bench{background:var(--bench);border:1px solid var(--line)}
+.rack{display:flex;gap:10px;overflow-x:auto;padding-bottom:6px;align-items:flex-end}
+.slot{display:grid;justify-items:center;gap:4px;min-width:64px;flex:0 0 auto}
+.tube{width:30px;height:150px;border:2px solid #7C8794;border-top:0;border-radius:0 0 15px 15px;position:relative;overflow:hidden;background:rgba(255,255,255,.35)}
+.tube::before{content:"";position:absolute;top:0;left:-5px;right:-5px;height:4px}
+.tube .liq{position:absolute;left:0;right:0;bottom:0;height:68%}
+.tube .liq::after{content:"";position:absolute;left:4px;top:4px;bottom:10px;width:4px;background:rgba(255,255,255,.45);border-radius:3px}
+.top-view .tube{width:56px;height:56px;border:3px solid #7C8794;border-radius:50%}
+.top-view .tube .liq{height:100%;border-radius:50%}
+.top-view .tube .liq::after{display:none}
+.slot .lab{font-size:.78rem;font-weight:600;max-width:72px;text-align:center;overflow-wrap:anywhere;color:#18202C}
+.card.bench .slot .lab{color:var(--ink)}
+.slot .lab.myst{color:#8A5A10}
+.card.bench .slot .lab.myst{color:var(--accent)}
+.slot .cm{font-family:var(--f-mono);font-size:.72rem;color:#A23F2F}
+.slot .ctl{display:flex;gap:2px}
+.slot .ctl button{font:inherit;font-size:.75rem;line-height:1;padding:3px 6px;border:1px solid #B9C1CB;background:#F4F6F8;color:#18202C;border-radius:4px;cursor:pointer}
+.card.bench .slot .ctl button{background:var(--surface);color:var(--ink);border-color:var(--line)}
+.journal{margin:0;padding-left:1.4em;display:grid;gap:4px;font-size:.9rem}
+.journal li::marker{font-family:var(--f-mono);color:var(--muted)}
+.journal .note{display:block;font-size:.8rem;color:var(--brick)}
+.empty{color:var(--muted);font-size:.9rem;font-style:italic}
+table{border-collapse:collapse;width:100%;font-size:.88rem}
+th,td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600}
+td.num{font-family:var(--f-mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+.tblwrap{overflow-x:auto}
+.order td.blank{color:var(--muted);font-family:var(--f-mono)}
+.foot{font-size:.8rem;color:var(--muted);display:flex;flex-wrap:wrap;gap:6px 18px;border-top:1px solid var(--line);padding-top:12px}
+.picto{display:inline-grid;place-items:center;width:20px;height:20px;transform:rotate(45deg);border:2px solid #C8102E;background:#fff;margin:0 10px 0 6px;vertical-align:middle}
+.picto span{transform:rotate(-45deg);font-weight:800;font-size:.75rem;color:#111}
+@keyframes shake{0%,100%{transform:rotate(0)}20%{transform:rotate(-9deg)}40%{transform:rotate(8deg)}60%{transform:rotate(-7deg)}80%{transform:rotate(6deg)}}
+@keyframes flip{0%{transform:rotate(0)}35%{transform:rotate(170deg)}50%{transform:rotate(170deg)}85%,100%{transform:rotate(0)}}
+#fiole{transform-box:view-box;transform-origin:490px 300px}
+#fiole.shake{animation:shake .9s ease-in-out}
+#fiole.flip{animation:flip 1.4s ease-in-out}
+#liquid{transition:transform .7s ease, fill .9s ease}
+#zliq{transition:transform .5s ease}
+@media (prefers-reduced-motion: reduce){#fiole.shake,#fiole.flip{animation:none}#liquid,#zliq{transition:none}}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div>
+      <div class="eyebrow">ESAAT Roubaix · Seconde · Labo virtuel</div>
+      <h1>Le Bleu de <em>Roubaix</em></h1>
+    </div>
+    <p class="story">Dans les archives d'une ancienne teinturerie de Roubaix, on a retrouvé un flacon daté de 1912 : un <strong>bain de sulfate de cuivre</strong> qui servait à fixer le bleu des laines. L'étiquette est effacée. Pour reproduire exactement cette nuance, préparez des solutions de concentration en masse connue, rangez-les en nuancier et encadrez le bain de 1912.</p>
+  </header>
+
+  <section class="main">
+    <div class="panel scene-wrap" aria-label="Paillasse">
+      <div class="statusrow" id="status"></div>
+      <svg class="scene" id="scene" viewBox="0 0 780 420" role="img" aria-label="Paillasse : balance avec coupelle, flacon de sulfate de cuivre, fiole jaugée, pissette, bidon de récupération">
+        <defs>
+          <clipPath id="clipF"><path id="clipPathF" d="M480,95 V255.8 A60,60 0 0 0 461.9,368 H518.1 A60,60 0 0 0 500,255.8 V95 Z"/></clipPath>
+        </defs>
+        <!-- paillasse -->
+        <rect x="0" y="378" width="780" height="42" fill="var(--bench)"/>
+        <line x1="0" y1="378" x2="780" y2="378" stroke="var(--ink)" stroke-width="2"/>
+
+        <!-- balance -->
+        <g id="balance">
+          <rect x="38" y="300" width="214" height="76" rx="8" fill="var(--surface)" stroke="var(--ink)" stroke-width="2"/>
+          <rect x="70" y="288" width="150" height="10" rx="3" fill="var(--glass)" stroke="var(--ink)" stroke-width="2"/>
+          <rect x="140" y="297" width="10" height="5" fill="var(--ink)"/>
+          <rect x="112" y="318" width="124" height="38" rx="4" fill="#0F1A12" stroke="var(--ink)" stroke-width="1.5"/>
+          <text id="disp" x="226" y="345" text-anchor="end" font-family="Share Tech Mono, monospace" font-size="24" fill="#8CF29C">0.00</text>
+          <text x="232" y="345" font-family="Share Tech Mono, monospace" font-size="11" fill="#8CF29C">g</text>
+          <rect x="54" y="326" width="38" height="20" rx="3" fill="var(--bg)" stroke="var(--ink)" stroke-width="1.5"/>
+          <text x="73" y="340" text-anchor="middle" font-size="10" font-weight="700" fill="var(--ink)">TARE</text>
+          <g id="coupelle">
+            <path d="M98,272 Q145,294 192,272 L186,286 Q145,298 104,286 Z" fill="var(--surface)" stroke="var(--ink)" stroke-width="2"/>
+            <ellipse id="mound" cx="145" cy="279" rx="0" ry="0" fill="var(--crystal)"/>
+            <ellipse id="resid" cx="128" cy="282" rx="0" ry="0" fill="var(--crystal)" opacity=".7"/>
+          </g>
+          <text x="145" y="398" text-anchor="middle" font-size="12" fill="var(--muted)">balance (0,01 g)</text>
+        </g>
+
+        <!-- flacon de sulfate de cuivre -->
+        <g id="flacon">
+          <rect x="290" y="236" width="86" height="140" rx="10" fill="var(--glass)" stroke="var(--ink)" stroke-width="2"/>
+          <rect x="300" y="220" width="66" height="18" rx="3" fill="var(--ink)"/>
+          <path d="M293,310 Q333,296 373,310 V366 Q373,374 365,374 H301 Q293,374 293,366 Z" fill="var(--crystal)" opacity=".9"/>
+          <rect x="300" y="250" width="66" height="54" fill="#FFFFFF" stroke="var(--ink)" stroke-width="1"/>
+          <text x="333" y="264" text-anchor="middle" font-size="9.5" font-weight="700" fill="#18202C">CuSO₄, 5H₂O</text>
+          <text x="333" y="275" text-anchor="middle" font-size="7.5" fill="#18202C">sulfate de cuivre</text>
+          <g transform="translate(318,290) rotate(45)"><rect x="-7" y="-7" width="14" height="14" fill="#fff" stroke="#C8102E" stroke-width="2"/></g>
+          <text x="318" y="294" text-anchor="middle" font-size="10" font-weight="800" fill="#111">!</text>
+          <g transform="translate(348,290) rotate(45)"><rect x="-7" y="-7" width="14" height="14" fill="#fff" stroke="#C8102E" stroke-width="2"/></g>
+          <path d="M343,293 q4,-5 8,0 q-4,4 -8,0 Z M351,293 l3,-2 v4 Z" fill="#111"/>
+          <path d="M385,240 L350,330" stroke="var(--muted)" stroke-width="4" stroke-linecap="round"/>
+          <text x="333" y="398" text-anchor="middle" font-size="12" fill="var(--muted)">sulfate de cuivre</text>
+        </g>
+
+        <!-- fiole jaugée -->
+        <g id="fioleG">
+          <g id="fiole">
+            <g id="fscale">
+              <g clip-path="url(#clipF)">
+                <rect x="420" y="95" width="140" height="290" fill="var(--glass)"/>
+                <rect id="liquid" x="420" y="0" width="140" height="420" fill="rgb(240,248,255)" style="transform:translateY(420px)"/>
+                <ellipse id="fsolid" cx="490" cy="368" rx="0" ry="0" fill="var(--crystal)"/>
+              </g>
+              <path d="M480,95 V255.8 A60,60 0 0 0 461.9,368 H518.1 A60,60 0 0 0 500,255.8 V95" fill="none" stroke="var(--ink)" stroke-width="2.4" stroke-linejoin="round"/>
+              <line x1="476" y1="150" x2="504" y2="150" stroke="var(--brick)" stroke-width="2"/>
+              <text x="510" y="154" font-size="10" fill="var(--brick)">trait de jauge</text>
+              <g id="bouchon" opacity="0"><rect x="478" y="80" width="24" height="18" rx="3" fill="var(--ink)"/></g>
+              <text id="fvol" x="490" y="345" text-anchor="middle" font-size="11" font-weight="700" fill="var(--muted)">100,0 mL</text>
+            </g>
+          </g>
+          <g id="entonnoir">
+            <path d="M456,62 H524 L497,96 V128 H483 V96 Z" fill="var(--surface)" fill-opacity=".85" stroke="var(--ink)" stroke-width="2" stroke-linejoin="round"/>
+          </g>
+          <text id="fname" x="490" y="398" text-anchor="middle" font-size="12" fill="var(--muted)">fiole jaugée 100,0 mL</text>
+        </g>
+
+        <!-- pissette -->
+        <g id="pissette">
+          <path d="M608,262 Q606,252 616,250 H652 Q662,252 660,262 V368 Q660,376 652,376 H616 Q608,376 608,368 Z" fill="var(--glass)" stroke="var(--ink)" stroke-width="2"/>
+          <path d="M610,300 H658 V368 Q658,374 652,374 H616 Q610,374 610,368 Z" fill="#CFE6F7" opacity=".7"/>
+          <rect x="624" y="238" width="20" height="14" fill="var(--surface)" stroke="var(--ink)" stroke-width="2"/>
+          <path d="M634,238 V214 Q634,206 626,206 H596 L592,212" fill="none" stroke="var(--ink)" stroke-width="3" stroke-linecap="round"/>
+          <text x="634" y="320" text-anchor="middle" font-size="9" font-weight="700" fill="#18202C">EAU</text>
+          <text x="634" y="331" text-anchor="middle" font-size="8" fill="#18202C">distillée</text>
+          <text x="634" y="398" text-anchor="middle" font-size="12" fill="var(--muted)">pissette</text>
+        </g>
+
+        <!-- bidon de récupération -->
+        <g id="bidon">
+          <path d="M688,300 H750 V372 Q750,376 746,376 H692 Q688,376 688,372 Z" fill="var(--surface)" stroke="var(--ink)" stroke-width="2"/>
+          <rect x="726" y="288" width="16" height="12" fill="var(--ink)"/>
+          <path d="M696,300 V292 H716 V300" fill="none" stroke="var(--ink)" stroke-width="2"/>
+          <rect id="bidonliq" x="690" y="370" width="58" height="4" fill="#8FC1E8"/>
+          <text x="719" y="335" text-anchor="middle" font-size="9" font-weight="700" fill="var(--ink)">DÉCHETS</text>
+          <text x="719" y="346" text-anchor="middle" font-size="9" fill="var(--ink)">Cu²⁺</text>
+          <text x="719" y="398" text-anchor="middle" font-size="12" fill="var(--muted)">récupération</text>
+        </g>
+      </svg>
+
+      <div class="zoomrow">
+        <svg class="zoom" id="zoom" viewBox="0 0 170 220" role="img" aria-label="Loupe sur le col de la fiole et le trait de jauge">
+          <defs><clipPath id="clipN"><rect x="55" y="0" width="60" height="220"/></clipPath></defs>
+          <g clip-path="url(#clipN)">
+            <g id="zliq" style="transform:translateY(220px)">
+              <path id="zliqpath" d="M55,0 Q85,14 115,0 V400 H55 Z" fill="rgb(240,248,255)"/>
+            </g>
+          </g>
+          <line x1="55" y1="0" x2="55" y2="220" stroke="var(--ink)" stroke-width="2.5"/>
+          <line x1="115" y1="0" x2="115" y2="220" stroke="var(--ink)" stroke-width="2.5"/>
+          <ellipse id="ztrait" cx="85" cy="110" rx="30" ry="0" fill="none" stroke="var(--brick)" stroke-width="2"/>
+          <text x="120" y="108" font-size="10" fill="var(--brick)">trait</text>
+          <g id="zeye" transform="translate(18,110)">
+            <path d="M-12,0 Q0,-9 12,0 Q0,9 -12,0 Z" fill="var(--surface)" stroke="var(--ink)" stroke-width="1.6"/>
+            <circle r="3.6" fill="var(--ink)"/>
+          </g>
+          <text id="zinfo" x="85" y="212" text-anchor="middle" font-size="10" fill="var(--muted)"></text>
+        </svg>
+        <div style="display:grid;gap:8px;min-width:0">
+          <h3>Loupe sur le trait de jauge</h3>
+          <p style="font-size:.88rem;color:var(--muted)">Placez votre œil, puis ajustez. Quand l'œil est à la bonne hauteur, le trait gravé tout autour du col se voit comme une seule ligne.</p>
+          <div class="seg" role="group" aria-label="Position de l'œil">
+            <button type="button" data-eye="dessus" aria-pressed="true">Œil au-dessus</button>
+            <button type="button" data-eye="face" aria-pressed="false">Œil à hauteur du trait</button>
+            <button type="button" data-eye="dessous" aria-pressed="false">Œil en dessous</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel gestes" aria-label="Gestes">
+      <div class="grp">
+        <h3>Choisir la fiole <small>fiole vide uniquement</small></h3>
+        <div class="seg" role="group" aria-label="Volume de la fiole">
+          <button type="button" data-v="50" aria-pressed="false">Fiole 50,0 mL</button>
+          <button type="button" data-v="100" aria-pressed="true">Fiole 100,0 mL</button>
+        </div>
+      </div>
+      <div class="grp">
+        <h3>Pesée <small>balance et coupelle</small></h3>
+        <div class="btns">
+          <button class="b" data-a="coupelle">Poser la coupelle</button>
+          <button class="b" data-a="tare">Tarer la balance</button>
+          <button class="b" data-a="spatG">Spatule : grosse pincée</button>
+          <button class="b" data-a="spatP">Spatule : petite pincée</button>
+          <button class="b" data-a="spatGrain">Spatule : quelques grains</button>
+          <button class="b ghost" data-a="retirer">Reprendre un peu de poudre</button>
+        </div>
+      </div>
+      <div class="grp">
+        <h3>Transfert <small>entonnoir à solide</small></h3>
+        <div class="btns">
+          <button class="b" data-a="verserPoudre">Verser la poudre dans la fiole</button>
+          <button class="b" data-a="rincer">Rincer coupelle et entonnoir (pissette)</button>
+          <button class="b ghost" data-a="entonnoir" id="btnEnt">Retirer l'entonnoir</button>
+        </div>
+      </div>
+      <div class="grp">
+        <h3>Dissolution et ajustement</h3>
+        <div class="btns">
+          <button class="b" data-a="moitie">Remplir d'eau à moitié</button>
+          <button class="b" data-a="agiter">Boucher et agiter doucement</button>
+          <button class="b" data-a="jet">Ajouter de l'eau (jet de pissette)</button>
+          <button class="b" data-a="goutte">Ajouter une goutte</button>
+          <button class="b" data-a="goutte5">Ajouter 5 gouttes</button>
+          <button class="b" data-a="homog">Boucher et retourner (homogénéiser)</button>
+        </div>
+      </div>
+      <div class="grp">
+        <h3>Échantillon pour le nuancier</h3>
+        <div class="field">
+          <label for="lbl">Étiquette</label>
+          <input id="lbl" type="text" maxlength="10" value="S1" autocomplete="off">
+          <button class="b main-b" data-a="tube">Verser dans un tube</button>
+        </div>
+        <div class="btns"><button class="b ghost" data-a="nouvelle">Vider la fiole dans le bidon et tout rincer</button></div>
+      </div>
+      <div class="msg" id="msg" role="status" aria-live="polite">Commencez par choisir une fiole et poser la coupelle sur la balance.</div>
+    </div>
+  </section>
+
+  <section class="lower">
+    <div class="panel">
+      <div class="rackhead">
+        <div>
+          <h2>Portoir-nuancier</h2>
+          <p style="font-size:.88rem;color:var(--muted)">Rangez les tubes du plus pâle au plus intense avec les flèches, puis placez le bain de 1912.</p>
+        </div>
+        <div class="statusrow">
+          <div class="seg" role="group" aria-label="Fond d'observation">
+            <button type="button" data-bg="white" aria-pressed="true">Fond blanc</button>
+            <button type="button" data-bg="bench" aria-pressed="false">Paillasse</button>
+          </div>
+          <div class="seg" role="group" aria-label="Sens d'observation">
+            <button type="button" data-view="side" aria-pressed="true">De profil</button>
+            <button type="button" data-view="top" aria-pressed="false">Par-dessus</button>
+          </div>
+        </div>
+      </div>
+      <div class="card white" id="card"><div class="rack" id="rack"></div></div>
+      <p style="font-size:.82rem;color:var(--muted);margin-top:8px">Astuce de teinturier : regardez les tubes par-dessus, sur fond blanc. La lumière traverse plus de liquide et les écarts de teinte ressortent.</p>
+    </div>
+
+    <div class="panel" style="display:grid;gap:14px">
+      <div>
+        <h2>Carnet de labo</h2>
+        <p class="eyebrow" id="prepTitle" style="margin-top:6px">Préparation en cours</p>
+      </div>
+      <ol class="journal" id="journal"></ol>
+      <div>
+        <h3 style="margin-bottom:6px">Tubes préparés</h3>
+        <div class="tblwrap"><table><thead><tr><th>Tube</th><th>Fiole</th><th>Masse lue</th><th>Remarques</th></tr></thead><tbody id="carnet"></tbody></table></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2 style="margin-bottom:10px">Commande de l'atelier</h2>
+    <p style="font-size:.9rem;margin-bottom:10px">Calculez d'abord sur votre fiche la valeur manquante de chaque ligne avec C<sub>m</sub> = m / V, puis préparez les solutions.</p>
+    <div class="tblwrap"><table class="order">
+      <thead><tr><th>Solution</th><th>C<sub>m</sub> (g/L)</th><th>Fiole (mL)</th><th>Masse à peser (g)</th></tr></thead>
+      <tbody>
+        <tr><td>S1</td><td class="num">10</td><td class="num">100,0</td><td class="blank">à calculer</td></tr>
+        <tr><td>S2</td><td class="blank">à calculer</td><td class="num">50,0</td><td class="num">1,00</td></tr>
+        <tr><td>S3</td><td class="num">30</td><td class="num">50,0</td><td class="blank">à calculer</td></tr>
+        <tr><td>S4</td><td class="blank">à calculer</td><td class="num">100,0</td><td class="num">4,00</td></tr>
+        <tr><td>S5</td><td class="num">50</td><td class="num">100,0</td><td class="blank">à calculer</td></tr>
+        <tr><td>S6</td><td class="blank">à vous de choisir</td><td class="blank">au choix</td><td class="blank">à calculer</td></tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <footer class="foot">
+    <span><span class="picto"><span>!</span></span>Sulfate de cuivre : nocif en cas d'ingestion, provoque une irritation des yeux et de la peau.</span>
+    <span><span class="picto"><span>~</span></span>Très toxique pour les organismes aquatiques : jamais à l'évier, toujours dans le bidon de récupération.</span>
+    <span>En vrai : blouse fermée, lunettes, gants.</span>
+  </footer>
+</div>
+
+<script>
+(function(){
+const MYST = 25;                        // concentration du bain de 1912 (g/L)
+const PROF = /maitre/.test(location.hash);
+const rnd=(a,b)=>a+Math.random()*(b-a);
+const fr=(x,d)=>x.toFixed(d).replace('.',',').replace('-','−');
+const $=s=>document.querySelector(s);
+
+const st={
+  V:100, coupMass:+rnd(3.18,3.74).toFixed(2), coupOn:false, tare:0,
+  onCoup:0, resid:0, solid:0, diss:0, water:0, funnel:true, homog:false,
+  eye:'dessus', eyeAdj:null, adjusted:false, notes:[], journal:[], lastRead:null,
+  transfers:0, rinsed:false, over:false, prep:1, anim:null
+};
+let tubes=[{id:'myst',label:'Bain 1912',C:MYST,myst:true,notes:[],m:null,V:null}];
+let tubeCount=0;
+
+/* --- couleur : loi de Beer-Lambert simplifiée pour un ion cuivre (absorbe le rouge) --- */
+function colorFor(C,l){
+  const e=[0.020,0.0075,0.0016];
+  const base=[248,251,255];
+  const c=e.map((k,i)=>Math.round(base[i]*Math.pow(10,-k*C*l)));
+  return `rgb(${c[0]},${c[1]},${c[2]})`;
+}
+function gross(){return st.coupOn? st.coupMass+st.onCoup+st.resid*0.5 : 0}
+function display(){let d=gross()-st.tare; if(Math.abs(d)<0.005)d=0; return Math.round(d*100)/100}
+function conc(){return st.water>0? st.diss/(st.water/1000) : 0}
+
+function say(t,kind){const m=$('#msg');m.textContent=t;m.className='msg'+(kind?' '+kind:'')}
+function log(type,text){
+  const last=st.journal[st.journal.length-1];
+  if(last && last.type===type && type!=='free'){last.n++; last.text=text; }
+  else st.journal.push({type,text,n:1,notes:[]});
+}
+function note(t){ if(!st.notes.includes(t)) st.notes.push(t); const last=st.journal[st.journal.length-1]; if(last && !last.notes.includes(t)) last.notes.push(t); }
+function fioleEmpty(){return st.water===0 && st.solid===0 && st.diss===0}
+
+/* --- rendu de la scène --- */
+function levelY(f){
+  if(f<=0) return 420;
+  if(f<=0.92) return 368 - f/0.92*106;
+  if(f<=1) return 262 - (f-0.92)/0.08*112;
+  return Math.max(96, 150-(f-1)*1400);
+}
+function render(){
+  $('#disp').textContent = display().toFixed(2);
+  $('#coupelle').style.display = st.coupOn?'':'none';
+  const mr=Math.min(34, st.onCoup>0? 5+Math.sqrt(st.onCoup)*14:0);
+  $('#mound').setAttribute('rx',mr); $('#mound').setAttribute('ry',mr? Math.min(9,2+mr/5):0);
+  const rr=st.resid>0?4:0; $('#resid').setAttribute('rx',rr); $('#resid').setAttribute('ry',rr?1.6:0);
+  // fiole
+  const sc = st.V===50? 0.8:1;
+  $('#fscale').setAttribute('transform', `translate(490 368) scale(${sc}) translate(-490 -368)`);
+  $('#fvol').textContent = st.V===50? '50,0 mL':'100,0 mL';
+  $('#fname').textContent = 'fiole jaugée '+(st.V===50?'50,0':'100,0')+' mL';
+  const f = st.water/st.V; const y=levelY(f);
+  const liq=$('#liquid'); liq.style.transform=`translateY(${y}px)`;
+  liq.setAttribute('fill', st.water>0? colorFor(conc(),2.6) : 'rgb(240,248,255)');
+  const sr = st.solid>0? Math.min(30, 6+Math.sqrt(st.solid)*14) : 0;
+  $('#fsolid').setAttribute('rx',sr); $('#fsolid').setAttribute('ry', sr? Math.min(8,2+sr/6):0);
+  const ent=$('#entonnoir');
+  ent.style.display = st.funnel?'':'none';
+  if(st.V===50){ // place l'entonnoir sur le col réduit
+    const topNeck = 368-(368-95)*0.8; ent.setAttribute('transform',`translate(0 ${topNeck-95})`);
+  } else ent.setAttribute('transform','');
+  $('#btnEnt').textContent = st.funnel? "Retirer l'entonnoir" : "Remettre l'entonnoir";
+  // loupe
+  const off = st.eye==='dessus'? 0.15 : st.eye==='dessous'? -0.15 : 0;
+  const app = st.water - st.V + off*(st.V/100);       // mL apparents par rapport au trait
+  const pxPerMl = st.V===50? 110:70;
+  let zy = 103 - app*pxPerMl;   // le bas du ménisque est 7 px sous le haut du tracé
+  let info='';
+  if(st.water < st.V*0.97){ zy=230; info='liquide sous la loupe'; }
+  else if(zy<-10){ zy=-10; info='bien au-dessus du trait'; }
+  $('#zliq').style.transform=`translateY(${zy}px)`;
+  $('#zliqpath').setAttribute('fill', st.water>0? colorFor(conc(),0.6):'rgb(240,248,255)');
+  $('#ztrait').setAttribute('ry', st.eye==='face'?0:7);
+  $('#zeye').setAttribute('transform', `translate(18,${st.eye==='dessus'?60:st.eye==='dessous'?160:110})`);
+  $('#zinfo').textContent=info;
+  document.querySelectorAll('[data-eye]').forEach(b=>b.setAttribute('aria-pressed', b.dataset.eye===st.eye));
+  document.querySelectorAll('[data-v]').forEach(b=>b.setAttribute('aria-pressed', +b.dataset.v===st.V));
+  renderStatus(); renderJournal(); renderRack(); renderCarnet();
+}
+function fState(){
+  if(fioleEmpty()) return 'vide';
+  if(st.water===0) return 'poudre au fond, sans eau';
+  if(st.over) return 'trait dépassé';
+  const d=st.water-st.V;
+  if(Math.abs(d)<=0.06) return 'au trait de jauge';
+  if(st.water<st.V*0.6) return 'environ à moitié';
+  if(st.water<st.V*0.97) return 'presque pleine';
+  return 'liquide dans le col';
+}
+function renderStatus(){
+  const chips=[];
+  chips.push(`<span class="chip">Fiole : <b>${fState()}</b></span>`);
+  if(st.solid>0 && st.water>0) chips.push(`<span class="chip warn">cristaux non dissous</span>`);
+  else if(st.diss>0) chips.push(`<span class="chip good">poudre dissoute</span>`);
+  if(st.resid>0) chips.push(`<span class="chip warn">poudre restée sur la coupelle et l'entonnoir</span>`);
+  if(st.homog) chips.push(`<span class="chip good">homogénéisée</span>`);
+  $('#status').innerHTML=chips.join('');
+}
+function renderJournal(){
+  $('#prepTitle').textContent='Préparation n° '+st.prep+' · gestes dans l\'ordre';
+  const j=$('#journal');
+  if(!st.journal.length){ j.innerHTML='<li class="empty" style="list-style:none;margin-left:-1.4em">Aucun geste pour l\'instant. Chaque geste s\'inscrira ici : servez-vous-en pour dessiner les étapes.</li>'; return; }
+  j.innerHTML=st.journal.map(e=>`<li>${e.text}${e.n>1&&e.type!=='spat'&&e.type!=='goutte'?' (×'+e.n+')':''}${e.notes.map(n=>`<span class="note">⚠ ${n}</span>`).join('')}</li>`).join('');
+}
+function renderRack(){
+  const top=$('#card').parentElement.querySelector('[data-view="top"]').getAttribute('aria-pressed')==='true';
+  $('#card').classList.toggle('top-view',top);
+  $('#rack').innerHTML=tubes.map((t,i)=>`
+    <div class="slot">
+      <div class="tube" title="${t.label}"><div class="liq" style="background:${colorFor(t.C, top?6:1)}"></div></div>
+      <div class="lab ${t.myst?'myst':''}">${esc(t.label)}</div>
+      ${PROF?`<div class="cm">${fr(t.C,1)} g/L</div>`:''}
+      <div class="ctl">
+        <button type="button" data-mv="${i}" data-d="-1" aria-label="Déplacer ${esc(t.label)} à gauche">◀</button>
+        ${t.myst?'':`<button type="button" data-rm="${i}" aria-label="Retirer le tube ${esc(t.label)}">✕</button>`}
+        <button type="button" data-mv="${i}" data-d="1" aria-label="Déplacer ${esc(t.label)} à droite">▶</button>
+      </div>
+    </div>`).join('');
+}
+function renderCarnet(){
+  const rows=tubes.filter(t=>!t.myst);
+  $('#carnet').innerHTML = rows.length? rows.map(t=>`<tr><td><b>${esc(t.label)}</b></td><td class="num">${t.V===50?'50,0':'100,0'} mL</td><td class="num">${t.m===null?'—':fr(t.m,2)+' g'}</td><td>${t.notes.length? t.notes.map(esc).join(' · ') : '<span style="color:var(--ok)">aucune erreur de geste détectée</span>'}</td></tr>`).join('')
+   : '<tr><td colspan="4" class="empty">Les tubes versés apparaîtront ici.</td></tr>';
+}
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
+function anim(cls,ms){const f=$('#fiole');f.classList.remove('shake','flip');void f.getBBox();f.classList.add(cls);
+  $('#bouchon').setAttribute('opacity',1);clearTimeout(st.anim);st.anim=setTimeout(()=>{f.classList.remove(cls);$('#bouchon').setAttribute('opacity',0)},ms)}
+
+function dissolve(k){ if(st.solid<=0) return; const d=st.solid*k; st.solid-=d; st.diss+=d; if(st.solid<0.01){st.diss+=st.solid;st.solid=0} }
+function checkOver(){
+  if(st.water>st.V+0.06 && !st.over){ st.over=true; note('trait de jauge dépassé : volume trop grand');
+    say("Trait de jauge dépassé ! On ne peut pas retirer de liquide d'une fiole jaugée : la concentration sera plus faible que prévu. Il faut recommencer la préparation.",'warn'); return true; }
+  return false;
+}
+
+/* --- gestes --- */
+const A={
+  coupelle(){ if(st.coupOn) return say('La coupelle est déjà sur le plateau.');
+    st.coupOn=true; log('free','Coupelle posée sur le plateau de la balance');
+    say('Coupelle posée. Regardez l\'affichage : la balance pèse aussi la coupelle.'); },
+  tare(){ if(st.onCoup>0) note('tare faite alors que la poudre était déjà sur la coupelle');
+    st.tare=gross(); log('tare','Balance tarée : l\'affichage revient à 0,00 g');
+    say(st.coupOn?'Tare faite : seule la poudre ajoutée sera désormais pesée.':'Balance tarée à vide. Posez la coupelle… et pensez à refaire la tare.'); },
+  spat(a,b,label){
+    if(!st.coupOn) return say('Posez d\'abord la coupelle sur le plateau : on ne verse jamais la poudre directement sur la balance.','warn');
+    if(st.tare===0 && st.journal.every(e=>e.type!=='tare')) note('poudre ajoutée sans avoir taré la balance avec la coupelle');
+    st.onCoup+=rnd(a,b); log('spat',`Poudre prélevée à la spatule et déposée sur la coupelle (affichage : ${fr(display(),2)} g)`);
+    say(`${label}. Affichage : ${fr(display(),2)} g.`); },
+  spatG(){A.spat(0.40,0.70,'Grosse pincée ajoutée')},
+  spatP(){A.spat(0.08,0.16,'Petite pincée ajoutée')},
+  spatGrain(){A.spat(0.01,0.03,'Quelques grains ajoutés')},
+  retirer(){ if(st.onCoup<=0) return say('Il n\'y a pas de poudre sur la coupelle.');
+    st.onCoup=Math.max(0,st.onCoup-rnd(0.02,0.09)); log('spat',`Poudre prélevée à la spatule et déposée sur la coupelle (affichage : ${fr(display(),2)} g)`);
+    say(`Un peu de poudre reprise et remise dans le flacon. Affichage : ${fr(display(),2)} g.`); },
+  verserPoudre(){
+    if(st.onCoup<=0) return say('La coupelle est vide : pesez d\'abord la poudre.','warn');
+    if(!st.funnel) return say('Remettez l\'entonnoir à solide sur la fiole : le col est trop étroit pour verser directement.','warn');
+    st.lastRead=display();
+    if(st.water>=st.V*0.97) note('poudre versée dans une fiole déjà pleine : impossible de bien dissoudre');
+    else if(st.water>0) note('eau mise avant la poudre : des grains collent dans l\'entonnoir mouillé');
+    const moved=st.onCoup*rnd(0.955,0.975); st.resid+=st.onCoup-moved; st.solid+=moved; st.onCoup=0; st.homog=false; st.transfers++;
+    log('free',`Poudre versée dans la fiole jaugée par l'entonnoir (masse lue avant transfert : ${fr(st.lastRead,2)} g)`);
+    say('Poudre versée. Observez la coupelle et l\'entonnoir : il reste quelques grains collés.'); },
+  rincer(){
+    if(!st.funnel) return say('Remettez l\'entonnoir : on rince la coupelle et l\'entonnoir au-dessus de la fiole, l\'eau de rinçage doit y entrer.','warn');
+    if(st.transfers===0) return say('Rien à rincer : aucune poudre n\'a encore été versée.');
+    st.solid+=st.resid; st.resid=0; st.water+=rnd(2,4); st.rinsed=true; st.homog=false;
+    log('rince','Coupelle et entonnoir rincés à l\'eau distillée au-dessus de la fiole');
+    if(!checkOver()) say('Rinçage fait : les grains restants sont entraînés dans la fiole.','good'); },
+  entonnoir(){ st.funnel=!st.funnel; log('free', st.funnel?'Entonnoir remis sur la fiole':'Entonnoir retiré du col de la fiole');
+    say(st.funnel?'Entonnoir en place.':'Entonnoir retiré : le col est dégagé, on peut boucher la fiole et voir le trait.'); },
+  moitie(){
+    const t=st.V*rnd(0.48,0.55);
+    if(st.water>=t) return say('La fiole est déjà remplie à plus de la moitié.');
+    if(st.solid+st.diss===0) note('eau versée avant la poudre');
+    st.water=t; st.homog=false; log('free','Fiole remplie d\'eau distillée jusqu\'à la moitié environ');
+    say(st.resid>0?'Fiole à moitié pleine. Attention : la coupelle et l\'entonnoir n\'ont pas été rincés.':'Fiole remplie à moitié environ.'); },
+  agiter(){
+    if(st.funnel) return say('Retirez d\'abord l\'entonnoir pour pouvoir boucher la fiole.','warn');
+    if(st.water===0) return say('Il n\'y a pas encore d\'eau : la poudre ne peut pas se dissoudre.','warn');
+    if(st.solid===0 && st.diss===0) return say('Il n\'y a pas de poudre à dissoudre.');
+    if(st.water>st.V*0.9){ note('agitation dans une fiole presque pleine : dissolution lente'); dissolve(0.3);} else dissolve(0.7);
+    if(st.resid>0) note('poudre laissée sur la coupelle et l\'entonnoir (pas de rinçage)');
+    log('agit','Fiole bouchée et agitée doucement'); anim('shake',900);
+    say(st.solid>0?'Encore quelques cristaux au fond : continuez d\'agiter.':'Toute la poudre est dissoute : la solution est limpide et bleue.', st.solid>0?'':'good'); },
+  jet(){
+    if(st.water===0 && st.solid===0) note('eau versée avant la poudre');
+    if(st.water>st.V*0.97) note('jet de pissette utilisé tout près du trait');
+    st.water+= (st.water<st.V*0.8? rnd(6,10) : st.water<st.V*0.95? rnd(1.3,2.8) : rnd(0.5,1.2))*st.V/100; st.homog=false; if(st.solid>0 && st.water>st.V*0.9) note('fiole complétée alors que la poudre n\'était pas dissoute');
+    log('jet','Eau distillée ajoutée à la pissette');
+    st.eyeAdj=st.eye;
+    if(!checkOver()) say(st.water>st.V*0.97?'Le liquide entre dans le col : passez au goutte à goutte et regardez la loupe.':'Eau ajoutée.'); },
+  goutte(n){
+    n=n||1;
+    if(st.funnel) return say('Retirez l\'entonnoir : il cache le trait de jauge.','warn');
+    if(st.water<st.V*0.9) return say('Goutte à goutte, ce sera très long : utilisez d\'abord le jet de pissette.');
+    for(let i=0;i<n;i++) st.water+=rnd(0.035,0.06);
+    st.homog=false; st.eyeAdj=st.eye; if(st.solid>0) note('fiole complétée alors que la poudre n\'était pas dissoute');
+    const last=st.journal[st.journal.length-1]; const cnt=(last&&last.type==='goutte'?last.cnt:0)+n;
+    log('goutte',`Ajustement goutte à goutte à la pissette (${cnt} gouttes)`); st.journal[st.journal.length-1].cnt=cnt;
+    if(!checkOver()){
+      const d=st.water-st.V;
+      say(d>=-0.06? (st.eye==='face'?'Le bas du ménisque affleure le trait de jauge.':'D\'ici, cela semble bon… mais où est votre œil ?') : n>1?'Cinq gouttes ajoutées.':'Une goutte ajoutée.', d>=-0.06&&st.eye==='face'?'good':''); } },
+  goutte5(){A.goutte(5)},
+  homog(){
+    if(st.funnel) return say('Retirez d\'abord l\'entonnoir pour pouvoir boucher la fiole.','warn');
+    if(st.water===0) return say('La fiole est vide.');
+    dissolve(0.9); dissolve(0.9);
+    if(st.water<st.V-0.06) note('homogénéisation faite avant d\'avoir atteint le trait de jauge');
+    st.homog=true; log('free','Fiole bouchée et retournée plusieurs fois pour homogénéiser'); anim('flip',1400);
+    say(st.water<st.V-0.06?'Solution homogène… mais le trait de jauge n\'est pas atteint.':'Solution homogène : la teinte est la même partout.', st.water<st.V-0.06?'warn':'good'); },
+  tube(){
+    if(st.water===0) return say('La fiole ne contient pas de solution.','warn');
+    if(tubes.length>=10) return say('Le portoir est plein : retirez un tube avec ✕.','warn');
+    const label=($('#lbl').value||'').trim()||('T'+(tubeCount+1));
+    const notes=[...st.notes];
+    const d=st.water-st.V;
+    if(!st.over && d<-0.06) notes.push('trait de jauge non atteint');
+    if(st.eyeAdj && st.eyeAdj!=='face' && Math.abs(d)<0.4) notes.push('ajustement lu avec l\'œil '+(st.eyeAdj==='dessus'?'au-dessus':'en dessous')+' du trait (parallaxe)');
+    if(st.solid>0) notes.push('poudre non entièrement dissoute');
+    if(st.resid>0) notes.push('coupelle et entonnoir non rincés');
+    let C=conc();
+    if(!st.homog){ notes.push('solution non homogénéisée : prélèvement non représentatif'); C*=0.78; }
+    const uniq=[...new Set(notes)];
+    tubes.push({id:'t'+(++tubeCount),label,C,notes:uniq,m:st.lastRead,V:st.V});
+    log('free',`Un peu de solution versée dans un tube à essais étiqueté « ${esc(label)} »`);
+    const m=label.match(/^(.*?)(\d+)$/); $('#lbl').value = m? m[1]+(+m[2]+1) : label;
+    say(uniq.length?`Tube « ${label} » placé sur le portoir. Le carnet signale ${uniq.length} problème${uniq.length>1?'s':''} de geste.`:`Tube « ${label} » placé sur le portoir. Préparation sans faute de geste !`, uniq.length?'warn':'good'); },
+  nouvelle(){
+    if(!fioleEmpty()){ const bl=$('#bidonliq'); const y=Math.max(318, +bl.getAttribute('y')-6); bl.setAttribute('y',y); bl.setAttribute('height',374-y); }
+    Object.assign(st,{onCoup:0,resid:0,solid:0,diss:0,water:0,funnel:true,homog:false,eyeAdj:null,notes:[],journal:[],lastRead:null,transfers:0,rinsed:false,over:false});
+    st.prep++; say('Fiole vidée dans le bidon de récupération, verrerie rincée. Nouvelle préparation : choisissez la fiole, puis tarez la coupelle propre.'); }
+};
+
+document.addEventListener('click',e=>{
+  const b=e.target.closest('button'); if(!b) return;
+  if(b.dataset.a){ A[b.dataset.a](); render(); return; }
+  if(b.dataset.eye){ st.eye=b.dataset.eye; render(); return; }
+  if(b.dataset.v){ const v=+b.dataset.v; if(v===st.V) return;
+    if(!fioleEmpty()) { say('La fiole contient déjà quelque chose : videz-la d\'abord (« Vider la fiole dans le bidon »).','warn'); return; }
+    st.V=v; say('Fiole jaugée de '+(v===50?'50,0':'100,0')+' mL installée.'); render(); return; }
+  if(b.dataset.bg){ document.querySelectorAll('[data-bg]').forEach(x=>x.setAttribute('aria-pressed',x===b)); $('#card').className='card '+b.dataset.bg; render(); return; }
+  if(b.dataset.view){ document.querySelectorAll('[data-view]').forEach(x=>x.setAttribute('aria-pressed',x===b)); renderRack(); return; }
+  if(b.dataset.mv){ const i=+b.dataset.mv, j=i+(+b.dataset.d); if(j<0||j>=tubes.length) return; [tubes[i],tubes[j]]=[tubes[j],tubes[i]]; renderRack(); return; }
+  if(b.dataset.rm){ tubes.splice(+b.dataset.rm,1); renderRack(); renderCarnet(); return; }
+});
+$('#lbl').addEventListener('keydown',e=>{ if(e.key==='Enter'){ A.tube(); render(); } });
+render();
+})();
+</script>
+</body></html>

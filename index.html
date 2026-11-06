@@ -1,0 +1,588 @@
+<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style></head><body><title>Fiche Bleu de Roubaix</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;800&family=Familjen+Grotesk:wght@400;500;600;700&family=Share+Tech+Mono&display=swap">
+<style>
+/* Layout : cahier d'atelier en une colonne de lecture (max 860px), barre de progression collante, parties A–D en bandes. Même identité que le labo : bleu de cuivre, jaune de gaude, brique. */
+:root{
+  --bg:#ECEFF3; --surface:#FFFFFF; --ink:#18202C; --muted:#5A6573; --line:#C6CED8;
+  --accent:#B7791F; --accent-soft:#F5E6C6; --accent-ink:#1E1606;
+  --brick:#A23F2F; --brick-soft:#F7DED8; --ok:#2E7A4D; --ok-soft:#DDF0E3; --blue:#1E66C2; --blue-soft:#DCEBFA;
+  --f-display:"Big Shoulders Display","Arial Narrow",Impact,sans-serif;
+  --f-body:"Familjen Grotesk","Segoe UI",system-ui,sans-serif;
+  --f-mono:"Share Tech Mono",ui-monospace,"Courier New",monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#10151C; --surface:#18202A; --ink:#E6EBF1; --muted:#9AA6B4; --line:#2E3946;
+  --accent:#E3A73F; --accent-soft:#3A2D14; --accent-ink:#1E1606;
+  --brick:#E5826C; --brick-soft:#3B201B; --ok:#6CC28F; --ok-soft:#173225; --blue:#5B9BE8; --blue-soft:#172a40; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#10151C; --surface:#18202A; --ink:#E6EBF1; --muted:#9AA6B4; --line:#2E3946;
+  --accent:#E3A73F; --accent-soft:#3A2D14; --accent-ink:#1E1606;
+  --brick:#E5826C; --brick-soft:#3B201B; --ok:#6CC28F; --ok-soft:#173225; --blue:#5B9BE8; --blue-soft:#172a40; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.55;
+  padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px));padding-block:0 64px}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--surface)}
+.wrap{max-width:860px;margin:0 auto;display:grid;gap:22px}
+h1,h2,h3{font-family:var(--f-display);font-weight:800;margin:0;line-height:1;text-wrap:balance}
+h1{font-size:clamp(2.4rem,8vw,3.8rem);text-transform:uppercase}
+h1 em{font-style:normal;color:var(--blue)}
+h2{font-size:clamp(1.6rem,4.5vw,2.1rem);text-transform:uppercase;display:flex;gap:12px;align-items:baseline;flex-wrap:wrap}
+h2 .tag{font-family:var(--f-body);font-size:.8rem;font-weight:600;letter-spacing:.08em;color:var(--muted);text-transform:uppercase}
+h3{font-size:1.2rem;text-transform:uppercase;letter-spacing:.03em}
+p{margin:0}
+.eyebrow{font-size:.75rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--surface);border-bottom:1px solid var(--line);margin:0 calc(-1 * max(16px, env(safe-area-inset-left, 0px)));padding:10px max(16px, env(safe-area-inset-left, 0px))}
+.bar-in{max-width:860px;margin:0 auto;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.bar nav{display:flex;gap:4px;flex-wrap:wrap}
+.bar nav a{font-weight:700;font-family:var(--f-display);font-size:1.05rem;text-decoration:none;color:var(--ink);padding:3px 10px;border:1px solid var(--line);border-radius:4px}
+.bar nav a:hover{border-color:var(--ink)}
+.prog{flex:1;min-width:140px;display:flex;align-items:center;gap:8px;font-size:.8rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.prog .track{flex:1;height:8px;background:var(--bg);border-radius:4px;overflow:hidden;border:1px solid var(--line)}
+.prog .fill{height:100%;background:var(--blue);width:0;transition:width .3s}
+header.top{padding-top:22px;display:grid;gap:14px;border-bottom:3px solid var(--ink);padding-bottom:18px}
+.ident{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+@media (max-width:560px){.ident{grid-template-columns:1fr}}
+label.f{display:grid;gap:3px;font-size:.78rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+input,select,textarea{font:inherit;font-size:.95rem;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:5px;padding:7px 9px;min-width:0;text-transform:none;letter-spacing:0}
+textarea{width:100%;min-height:68px;resize:vertical;line-height:1.45}
+input.num{width:7.5em;font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+input:focus-visible,select:focus-visible,textarea:focus-visible,button:focus-visible,a:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.ok-f{border-color:var(--ok)!important;background:var(--ok-soft)!important}
+.ko-f{border-color:var(--brick)!important;background:var(--brick-soft)!important}
+section.part{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:22px 20px;display:grid;gap:22px;scroll-margin-top:70px;min-width:0}
+@media (max-width:480px){section.part{padding:18px 14px}}
+.lead{font-size:1.02rem;max-width:65ch}
+.q{display:grid;gap:10px;min-width:0}
+.q > .qh{font-weight:700}
+.q > .qh b{font-family:var(--f-display);font-size:1.15rem;color:var(--blue);margin-right:6px}
+.hint{font-size:.85rem;color:var(--muted)}
+.row{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center}
+.b{font:inherit;font-size:.88rem;font-weight:600;padding:7px 12px;border-radius:5px;border:1px solid var(--line);background:var(--bg);color:var(--ink);cursor:pointer}
+.b:hover{border-color:var(--ink)}
+.b.main{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.b.small{font-size:.8rem;padding:4px 9px}
+.fb{font-size:.88rem;font-weight:600;min-height:1.2em}
+.fb.ok{color:var(--ok)} .fb.ko{color:var(--brick)}
+.tblwrap{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:.92rem}
+th,td{text-align:left;padding:7px 8px;border-bottom:1px solid var(--line);vertical-align:middle}
+th{font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600}
+td.num{font-family:var(--f-mono);white-space:nowrap}
+td select{width:100%}
+.callout{border-left:4px solid var(--accent);background:var(--accent-soft);padding:12px 14px;border-radius:0 5px 5px 0;font-size:.93rem}
+.callout.danger{border-color:var(--brick);background:var(--brick-soft)}
+.formula{font-family:var(--f-display);font-size:2rem;font-weight:800;text-align:center;padding:10px;border:2px solid var(--ink);border-radius:6px;background:var(--bg)}
+.formula small{display:block;font-family:var(--f-body);font-size:.85rem;font-weight:500;color:var(--muted)}
+.labo-link{display:flex;gap:14px;align-items:center;justify-content:space-between;flex-wrap:wrap;border:2px solid var(--blue);border-radius:6px;padding:14px 16px;background:var(--blue-soft)}
+.labo-link a{font-weight:700;color:var(--ink);background:var(--surface);border:1px solid var(--blue);padding:8px 14px;border-radius:5px;text-decoration:none}
+/* ordre glissable */
+.sort{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.sort li{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:10px;align-items:center;background:var(--bg);border:1px solid var(--line);border-radius:5px;padding:8px 10px;cursor:grab;touch-action:none;user-select:none}
+.sort li.drag{opacity:.5;border-style:dashed}
+.sort li .pos{font-family:var(--f-mono);color:var(--muted);font-size:.85rem;width:1.6em}
+.sort li .lt{font-family:var(--f-display);font-weight:800;color:var(--blue);font-size:1.2rem;margin-right:6px}
+.sort li .mv{display:flex;gap:3px}
+.sort li.ok-f .pos{color:var(--ok)} .sort li.ko-f .pos{color:var(--brick)}
+/* dessin */
+.draws{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+@media (max-width:700px){.draws{grid-template-columns:1fr}}
+.dcard{border:1px solid var(--line);border-radius:6px;overflow:hidden;background:var(--bg);display:grid;min-width:0}
+.dhead{padding:8px 10px;font-size:.85rem;display:flex;gap:8px;align-items:baseline}
+.dhead b{font-family:var(--f-display);font-size:1.3rem;color:var(--blue)}
+.dcard canvas{width:100%;aspect-ratio:4/3;background:#fff;display:block;touch-action:none;cursor:crosshair;border-block:1px solid var(--line)}
+.tools{display:flex;flex-wrap:wrap;gap:4px;padding:6px 8px;align-items:center}
+.tools button{font:inherit;font-size:.78rem;padding:4px 8px;border:1px solid var(--line);border-radius:4px;background:var(--surface);color:var(--ink);cursor:pointer}
+.tools button[aria-pressed="true"]{background:var(--ink);color:var(--surface)}
+.tools .sw{width:22px;height:22px;padding:0;border-radius:50%}
+.tools .sw[aria-pressed="true"]{outline:3px solid var(--accent);outline-offset:1px}
+.tools input{font-size:.8rem;padding:3px 6px;width:9em}
+/* nuancier */
+.nuancier{display:flex;gap:12px;overflow-x:auto;padding:16px 10px 10px;background:#fff;border:1px solid #D8DDE3;border-radius:6px;align-items:flex-end}
+.nt{display:grid;justify-items:center;gap:6px;flex:0 0 auto;width:86px}
+.nt .tube{width:34px;height:130px;border:2px solid #7C8794;border-top:0;border-radius:0 0 17px 17px;background:#fff;cursor:pointer;position:relative;overflow:hidden;padding:0}
+.nt .tube span{position:absolute;left:0;right:0;bottom:0;height:70%}
+.nt .tube[aria-pressed="true"]{outline:3px solid var(--accent);outline-offset:3px}
+.nt input{width:80px;font-size:.8rem;padding:4px 5px;text-align:center;background:#fff;color:#18202C;border-color:#C6CED8}
+.nt.myst input:first-of-type{font-weight:700}
+.palette{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.palette button{width:30px;height:30px;border-radius:50%;border:2px solid #7C8794;cursor:pointer}
+.palette input[type=color]{width:44px;height:32px;padding:2px}
+/* trous */
+.cloze{line-height:2.3;font-size:1rem}
+.cloze select{padding:3px 6px;font-size:.92rem}
+.render{display:grid;gap:10px}
+.done{border:2px solid var(--ok);background:var(--ok-soft);border-radius:6px;padding:14px 16px;display:grid;gap:10px}
+.saved{font-size:.78rem;color:var(--muted)}
+footer{font-size:.8rem;color:var(--muted);text-align:center}
+@media (prefers-reduced-motion: reduce){.prog .fill{transition:none}}
+</style>
+
+<div class="bar"><div class="bar-in">
+  <nav aria-label="Parties"><a href="#partie-a">A</a><a href="#partie-b">B</a><a href="#partie-c">C</a><a href="#partie-d">D</a></nav>
+  <div class="prog"><div class="track"><div class="fill" id="pfill"></div></div><span id="ptxt">0 %</span></div>
+  <span class="saved" id="saved">Réponses enregistrées sur cet appareil</span>
+</div></div>
+
+<div class="wrap">
+  <header class="top">
+    <div class="eyebrow">ESAAT Roubaix · Seconde · Physique-chimie · Concentration en masse</div>
+    <h1>Le Bleu de <em>Roubaix</em></h1>
+    <p class="lead">Dans les archives d'une ancienne teinturerie de Roubaix, on a retrouvé un flacon daté de 1912 : un bain de sulfate de cuivre qui servait à fixer les teintures sur la laine. L'étiquette est effacée. Votre mission : retrouver sa concentration en masse en le comparant à des solutions que vous préparez vous-même.</p>
+    <div class="ident">
+      <label class="f">Nom<input id="nom" data-k="nom" data-label="Nom" autocomplete="family-name"></label>
+      <label class="f">Prénom<input id="prenom" data-k="prenom" data-label="Prénom" autocomplete="given-name"></label>
+      <label class="f">Classe<input id="classe" data-k="classe" data-label="Classe" placeholder="2nde …"></label>
+    </div>
+  </header>
+
+  <div class="labo-link">
+    <div><h3>Le labo virtuel</h3><p class="hint">Gardez-le ouvert dans un autre onglet pendant toute la séance.</p></div>
+    <a href="https://claude.ai/artifact/HArfNQczN9NQmKub57Wsrj" target="_blank" rel="noopener">Ouvrir le labo ↗</a>
+  </div>
+
+  <div class="tblwrap"><table>
+    <thead><tr><th>Durée</th><th>Partie</th><th>Ce que vous faites</th></tr></thead>
+    <tbody>
+      <tr><td class="num">15 min</td><td><b>A</b> · Le protocole</td><td>Nommer la verrerie, ordonner les gestes, dessiner les étapes</td></tr>
+      <tr><td class="num">20 min</td><td><b>B</b> · Les calculs</td><td>Calculer masses et concentrations</td></tr>
+      <tr><td class="num">45 min</td><td><b>C</b> · Le labo</td><td>Préparer S1 à S5, colorier le nuancier, encadrer le bain de 1912</td></tr>
+      <tr><td class="num">20 min</td><td><b>D</b> · Le bilan</td><td>Texte à trous, rendre la copie, QCM Pronote</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="callout danger"><b>Sécurité, même en virtuel.</b> Le sulfate de cuivre est nocif en cas d'ingestion, irritant pour les yeux et la peau, très toxique pour les organismes aquatiques. Au laboratoire : blouse fermée, lunettes, gants ; les solutions vont dans le bidon de récupération, jamais à l'évier.</div>
+
+  <!-- ===================== A ===================== -->
+  <section class="part" id="partie-a">
+    <h2>A · Le protocole <span class="tag">15 min</span></h2>
+    <p class="lead">Une dissolution réussie : une masse pesée avec soin, entièrement dissoute, dans un volume de solution connu avec précision.</p>
+
+    <div class="q">
+      <p class="qh"><b>A1</b>Nommez le matériel de la paillasse.</p>
+      <div class="tblwrap"><table id="a1"><thead><tr><th>Description</th><th style="width:38%">Nom du matériel</th></tr></thead><tbody></tbody></table></div>
+      <div class="row"><button class="b" data-check="a1">Vérifier</button><span class="fb" id="fb-a1"></span></div>
+    </div>
+
+    <div class="q">
+      <p class="qh"><b>A2</b>Remettez les gestes dans l'ordre.</p>
+      <p class="hint">Glissez les cartes, ou utilisez les flèches ▲ ▼. Vérifiez aussi votre ordre dans le labo : le carnet de labo note chaque geste et signale les erreurs.</p>
+      <ol class="sort" id="a2"></ol>
+      <div class="row"><button class="b" data-check="a2">Vérifier l'ordre</button><span class="fb" id="fb-a2"></span></div>
+    </div>
+
+    <div class="q">
+      <p class="qh"><b>A3</b>Dessinez le protocole, une étape par cadre.</p>
+      <p class="hint">Un schéma de physique-chimie se fait vu de profil, avec le nom de la verrerie, le nom des produits et une flèche pour chaque action. Outil « Légende » : écrivez le mot, puis cliquez dans le cadre pour le placer. Vous pouvez aussi dessiner sur papier et joindre la photo sur Pronote.</p>
+      <div class="draws" id="draws"></div>
+    </div>
+
+    <div class="q">
+      <p class="qh"><b>A4</b>Expliquez les gestes, en une ou deux phrases.</p>
+      <div class="render" id="a4"></div>
+    </div>
+  </section>
+
+  <!-- ===================== B ===================== -->
+  <section class="part" id="partie-b">
+    <h2>B · Les calculs de l'atelier <span class="tag">20 min</span></h2>
+    <p class="lead">La concentration en masse C<sub>m</sub> d'une espèce dissoute est la masse de cette espèce dissoute dans un litre de solution.</p>
+    <div class="formula">C<sub>m</sub> = m / V<small>C<sub>m</sub> en g/L · m en g · V en L — donc m = C<sub>m</sub> × V</small></div>
+    <div class="callout">V est le volume de la <b>solution</b> (la fiole remplie jusqu'au trait), pas le volume d'eau ajouté. m est la masse du <b>soluté</b> dissous, pas celle de la solution.</div>
+
+    <div class="q">
+      <p class="qh"><b>B1</b>Convertissez.</p>
+      <div class="row" id="b1">
+        <span>100,0 mL = <input class="num" data-k="b1_0" data-label="B1 · 100,0 mL en L" data-a="b1_0" inputmode="decimal"> L</span>
+        <span>50,0 mL = <input class="num" data-k="b1_1" data-label="B1 · 50,0 mL en L" data-a="b1_1" inputmode="decimal"> L</span>
+        <span>250 mL = <input class="num" data-k="b1_2" data-label="B1 · 250 mL en L" data-a="b1_2" inputmode="decimal"> L</span>
+        <span>0,500 L = <input class="num" data-k="b1_3" data-label="B1 · 0,500 L en mL" data-a="b1_3" inputmode="decimal"> mL</span>
+      </div>
+      <div class="row"><button class="b" data-check="b1">Vérifier</button><span class="fb" id="fb-b1"></span></div>
+    </div>
+
+    <div class="q">
+      <p class="qh"><b>B2</b>Complétez la commande de l'atelier.</p>
+      <div class="tblwrap"><table id="b2">
+        <thead><tr><th>Solution</th><th>C<sub>m</sub> (g/L)</th><th>Fiole (mL)</th><th>V (L)</th><th>m (g)</th></tr></thead>
+        <tbody>
+          <tr><td><b>S1</b></td><td class="num">10</td><td class="num">100,0</td><td><input class="num" data-k="b2_v1" data-label="B2 · S1 V (L)" data-a="b2_v1" inputmode="decimal"></td><td><input class="num" data-k="b2_m1" data-label="B2 · S1 masse (g)" data-a="b2_m1" inputmode="decimal"></td></tr>
+          <tr><td><b>S2</b></td><td><input class="num" data-k="b2_c2" data-label="B2 · S2 Cm (g/L)" data-a="b2_c2" inputmode="decimal"></td><td class="num">50,0</td><td><input class="num" data-k="b2_v2" data-label="B2 · S2 V (L)" data-a="b2_v2" inputmode="decimal"></td><td class="num">1,00</td></tr>
+          <tr><td><b>S3</b></td><td class="num">30</td><td class="num">50,0</td><td><input class="num" data-k="b2_v3" data-label="B2 · S3 V (L)" data-a="b2_v3" inputmode="decimal"></td><td><input class="num" data-k="b2_m3" data-label="B2 · S3 masse (g)" data-a="b2_m3" inputmode="decimal"></td></tr>
+          <tr><td><b>S4</b></td><td><input class="num" data-k="b2_c4" data-label="B2 · S4 Cm (g/L)" data-a="b2_c4" inputmode="decimal"></td><td class="num">100,0</td><td><input class="num" data-k="b2_v4" data-label="B2 · S4 V (L)" data-a="b2_v4" inputmode="decimal"></td><td class="num">4,00</td></tr>
+          <tr><td><b>S5</b></td><td class="num">50</td><td class="num">100,0</td><td><input class="num" data-k="b2_v5" data-label="B2 · S5 V (L)" data-a="b2_v5" inputmode="decimal"></td><td><input class="num" data-k="b2_m5" data-label="B2 · S5 masse (g)" data-a="b2_m5" inputmode="decimal"></td></tr>
+        </tbody>
+      </table></div>
+      <label class="f">Détaillez deux calculs (formule, valeurs avec unités, résultat avec unité)<textarea data-k="b2_det" data-label="B2 · Calculs détaillés" placeholder="S1 : m = Cm × V = …"></textarea></label>
+      <div class="row"><button class="b" data-check="b2">Vérifier</button><span class="fb" id="fb-b2"></span></div>
+    </div>
+
+    <div class="q">
+      <p class="qh"><b>B3</b>Prévoyez les teintes : rangez S1 à S5 de la plus pâle à la plus foncée.</p>
+      <ol class="sort" id="b3"></ol>
+      <label class="f">Justification<textarea data-k="b3_j" data-label="B3 · Justification"></textarea></label>
+      <div class="row"><button class="b" data-check="b3">Vérifier l'ordre</button><span class="fb" id="fb-b3"></span></div>
+    </div>
+
+    <div class="q">
+      <p class="qh"><b>B4</b>S1 et S2 contiennent toutes les deux 1,00 g de sulfate de cuivre. Auront-elles la même teinte ?</p>
+      <div class="row" role="radiogroup" aria-label="B4">
+        <label><input type="radio" name="b4" value="même teinte" data-k="b4" data-label="B4 · Réponse"> Même teinte</label>
+        <label><input type="radio" name="b4" value="S1 plus foncée" data-k="b4"> S1 plus foncée</label>
+        <label><input type="radio" name="b4" value="S2 plus foncée" data-k="b4"> S2 plus foncée</label>
+      </div>
+      <label class="f">Justifiez par un calcul<textarea data-k="b4_j" data-label="B4 · Justification"></textarea></label>
+      <div class="row"><button class="b" data-check="b4">Vérifier</button><span class="fb" id="fb-b4"></span></div>
+    </div>
+
+    <div class="q">
+      <p class="qh"><b>B5</b>Le rinçage oublié</p>
+      <p>Pour préparer S3, Lina pèse bien la bonne masse mais ne rince pas la coupelle : 0,05 g de poudre y reste collé.</p>
+      <div class="row">
+        <span>Concentration réellement obtenue : <input class="num" data-k="b5" data-label="B5 · Concentration obtenue (g/L)" data-a="b5" inputmode="decimal"> g/L</span>
+        <select data-k="b5_t" data-label="B5 · Teinte" data-a="b5_t"><option value="">La solution est…</option><option>plus claire que prévu</option><option>identique</option><option>plus foncée que prévu</option></select>
+      </div>
+      <div class="row"><button class="b" data-check="b5">Vérifier</button><span class="fb" id="fb-b5"></span></div>
+    </div>
+
+    <div class="q">
+      <p class="qh"><b>B6</b>L'erreur de Noé</p>
+      <p>Noé affirme : « La concentration en masse, c'est la même chose que la masse volumique. » Expliquez son erreur. <span class="hint">Indice : masse de quoi ? volume de quoi ?</span></p>
+      <textarea data-k="b6" data-label="B6 · L'erreur de Noé"></textarea>
+    </div>
+  </section>
+
+  <!-- ===================== C ===================== -->
+  <section class="part" id="partie-c">
+    <h2>C · Le labo : nuancier et bain de 1912 <span class="tag">45 min</span></h2>
+    <p class="lead">Préparez S1 à S5 dans le labo virtuel, rangez-les en nuancier, encadrez le bain de 1912, puis précisez sa concentration avec une sixième solution.</p>
+
+    <div class="q">
+      <p class="qh"><b>C1</b>Préparez S1 à S5 et relevez le carnet de labo.</p>
+      <p class="hint">Pour chaque solution : bonne fiole, protocole de la partie A, masse calculée en B2, puis un tube étiqueté. Entre deux préparations : « Vider la fiole dans le bidon et tout rincer ». Si le carnet signale une erreur, retirez le tube (✕) et recommencez.</p>
+      <div class="tblwrap"><table>
+        <thead><tr><th>Solution</th><th>Fiole (mL)</th><th>Masse affichée (g)</th><th>Remarques du carnet</th><th>Refaite</th></tr></thead>
+        <tbody id="c1"></tbody>
+      </table></div>
+    </div>
+
+    <div class="q">
+      <p class="qh"><b>C2</b>Construisez le nuancier dans le labo.</p>
+      <p class="hint">Rangez les tubes du plus pâle au plus foncé, sur fond blanc, de profil puis par-dessus.</p>
+      <label class="f">Votre rangement confirme-t-il votre prévision de B3 ?<textarea data-k="c2" data-label="C2 · Comparaison avec la prévision"></textarea></label>
+    </div>
+
+    <div class="q">
+      <p class="qh"><b>C3</b>Coloriez votre nuancier.</p>
+      <p class="hint">Cliquez sur un tube, puis sur une couleur (ou composez la vôtre). Écrivez sous chaque tube son nom et sa concentration, dans l'ordre observé. Le dernier emplacement est pour le bain de 1912.</p>
+      <div class="palette" id="palette" aria-label="Palette"></div>
+      <div class="nuancier" id="nuancier"></div>
+    </div>
+
+    <div class="q">
+      <p class="qh"><b>C4</b>Encadrez le bain de 1912.</p>
+      <div class="row"><span>La concentration du bain est comprise entre <input class="num" data-k="c4_a" data-label="C4 · Borne basse (g/L)" data-a="c4_a" inputmode="decimal"> g/L et <input class="num" data-k="c4_b" data-label="C4 · Borne haute (g/L)" data-a="c4_b" inputmode="decimal"> g/L.</span></div>
+      <div class="row"><button class="b" data-check="c4">Vérifier</button><span class="fb" id="fb-c4"></span></div>
+    </div>
+
+    <div class="q">
+      <p class="qh"><b>C5</b>Précisez avec S6.</p>
+      <p class="hint">Choisissez une concentration entre vos deux bornes, calculez la masse pour la fiole de votre choix, préparez S6 et comparez-la au bain.</p>
+      <div class="row">
+        <span>C<sub>m</sub>(S6) = <input class="num" data-k="c5_c" data-label="C5 · Concentration choisie (g/L)" inputmode="decimal"> g/L</span>
+        <select data-k="c5_v" data-label="C5 · Fiole"><option value="">Fiole…</option><option value="50">50,0 mL</option><option value="100">100,0 mL</option></select>
+        <span>m = <input class="num" data-k="c5_m" data-label="C5 · Masse calculée (g)" inputmode="decimal"> g</span>
+      </div>
+      <label class="f">Calcul<textarea data-k="c5_calc" data-label="C5 · Calcul de la masse"></textarea></label>
+      <div class="row" role="radiogroup" aria-label="C5 comparaison">
+        <span class="hint">S6 est</span>
+        <label><input type="radio" name="c5r" value="plus pâle que le bain" data-k="c5_r" data-label="C5 · Comparaison"> plus pâle</label>
+        <label><input type="radio" name="c5r" value="identique au bain" data-k="c5_r"> identique</label>
+        <label><input type="radio" name="c5r" value="plus foncée que le bain" data-k="c5_r"> plus foncée</label>
+        <span class="hint">que le bain</span>
+      </div>
+      <div class="row"><button class="b" data-check="c5">Vérifier mon calcul</button><span class="fb" id="fb-c5"></span></div>
+    </div>
+
+    <div class="q">
+      <p class="qh"><b>C6</b>Concluez.</p>
+      <div class="row">
+        <span>C<sub>m</sub>(bain de 1912) ≈ <input class="num" data-k="c6_c" data-label="C6 · Concentration du bain (g/L)" inputmode="decimal"> g/L</span>
+        <span>Masse pour 2,0 L de bain : <input class="num" data-k="c6_m" data-label="C6 · Masse pour 2,0 L (g)" inputmode="decimal"> g</span>
+      </div>
+      <div class="row"><button class="b" data-check="c6">Vérifier</button><span class="fb" id="fb-c6"></span></div>
+    </div>
+  </section>
+
+  <!-- ===================== D ===================== -->
+  <section class="part" id="partie-d">
+    <h2>D · Bilan et validation <span class="tag">20 min</span></h2>
+
+    <div class="q">
+      <p class="qh"><b>D1</b>Le texte à trous du teinturier</p>
+      <p class="cloze" id="d1"></p>
+      <div class="row"><button class="b" data-check="d1">Vérifier</button><span class="fb" id="fb-d1"></span></div>
+    </div>
+
+    <div class="q">
+      <p class="qh"><b>D2</b>Ce que j'ai appris</p>
+      <label class="f">En deux phrases, expliquez à un camarade absent comment on trouve la concentration d'une solution colorée inconnue avec une échelle de teinte.<textarea data-k="d2" data-label="D2 · Ce que j'ai appris"></textarea></label>
+    </div>
+
+    <div class="q">
+      <p class="qh"><b>D3</b>Rendre mon travail</p>
+      <div class="done">
+        <p id="recap">…</p>
+        <div class="row">
+          <button class="b main" id="dl">Enregistrer ma copie (fichier HTML)</button>
+          <button class="b" id="copy">Copier mes réponses (texte)</button>
+          <span class="fb" id="fb-dl"></span>
+        </div>
+        <p class="hint">Déposez le fichier enregistré dans le travail à faire sur Pronote, puis répondez au QCM « Le Bleu de Roubaix » (toutes les questions sont obligatoires). Si l'enregistrement n'est pas possible sur votre appareil, copiez vos réponses dans un document et faites des captures d'écran de vos dessins et de votre nuancier.</p>
+      </div>
+    </div>
+
+    <div class="callout"><b>Pour aller plus loin.</b> Le bain de 1912 est trop foncé pour teindre une soie fine : il faudrait le rendre deux fois moins concentré sans peser de poudre. Comment faire ? Ce sera le sujet de la prochaine séance.
+      <textarea data-k="plus" data-label="Pour aller plus loin" style="margin-top:8px" placeholder="Votre idée…"></textarea></div>
+  </section>
+
+  <footer>Vos réponses restent sur cet appareil et dans ce navigateur. Elles ne sont envoyées à personne tant que vous ne déposez pas votre copie sur Pronote.</footer>
+</div>
+
+<script>
+(function(){
+const ANS = JSON.parse(decodeURIComponent(escape(atob("eyJhMSI6IFsiQ291cGVsbGUgZGUgcGVzw6llIiwgIkJhbGFuY2UiLCAiU3BhdHVsZSIsICJFbnRvbm5vaXIgw6Agc29saWRlIiwgIkZpb2xlIGphdWfDqWUiLCAiUGlzc2V0dGUiLCAiVHViZSDDoCBlc3NhaXMiLCAiQsOpY2hlciJdLCAiYTIiOiBbIkIiLCAiSCIsICJEIiwgIkciLCAiRiIsICJBIiwgIkMiLCAiRSJdLCAiYjEiOiBbMC4xLCAwLjA1LCAwLjI1LCA1MDBdLCAiYjIiOiB7ImIyX3YxIjogMC4xLCAiYjJfbTEiOiAxLCAiYjJfYzIiOiAyMCwgImIyX3YyIjogMC4wNSwgImIyX3YzIjogMC4wNSwgImIyX20zIjogMS41LCAiYjJfYzQiOiA0MCwgImIyX3Y0IjogMC4xLCAiYjJfdjUiOiAwLjEsICJiMl9tNSI6IDV9LCAiYjMiOiBbIlMxIiwgIlMyIiwgIlMzIiwgIlM0IiwgIlM1Il0sICJiNCI6ICJTMiBwbHVzIGZvbmPDqWUiLCAiYjUiOiAyOSwgImI1X3QiOiAicGx1cyBjbGFpcmUgcXVlIHByw6l2dSIsICJjNCI6IFsyMCwgMzBdLCAiYzYiOiAyNSwgImQxIjogWyJzb2x1dMOpIiwgInNvbHZhbnQiLCAiZGlzc29sdXRpb24iLCAic29sdXRpb24iLCAidm9sdW1lIiwgImZpb2xlIGphdWfDqWUiLCAidHJhaXQgZGUgamF1Z2UiLCAiaG9tb2fDqW7DqWlzZXIiLCAibWFzc2UiLCAiZy9MIl19"))));
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const LS='bleu-roubaix-fiche-v1';
+let store={}; try{ store=JSON.parse(localStorage.getItem(LS)||'{}')||{}; }catch(e){ store={}; }
+let saveT=null;
+function persist(){ clearTimeout(saveT); saveT=setTimeout(()=>{ try{ localStorage.setItem(LS,JSON.stringify(store)); $('#saved').textContent='Enregistré sur cet appareil · '+new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'}); }catch(e){ $('#saved').textContent='Enregistrement impossible sur cet appareil : pensez à enregistrer votre copie.'; } progress(); recap(); },250); }
+const num=v=>{ if(v==null) return NaN; v=String(v).trim().replace(/\s/g,'').replace(',','.'); return v===''?NaN:Number(v); };
+const fr=(x,d)=>(+x).toFixed(d).replace('.',',');
+function esc(s){return String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
+function fb(id,ok,txt){ const e=$('#fb-'+id); e.className='fb '+(ok?'ok':'ko'); e.textContent=txt; }
+function mark(el,ok){ el.classList.remove('ok-f','ko-f'); if(ok!==null) el.classList.add(ok?'ok-f':'ko-f'); }
+
+/* ---------- A1 ---------- */
+const A1D=["Petit récipient plat posé sur le plateau pour peser un solide","Instrument qui mesure une masse au centième de gramme","Petite cuillère plate pour prélever la poudre","Cône posé sur le col pour verser un solide sans en perdre","Verrerie à col étroit portant un trait, qui contient un volume précis","Flacon souple qui délivre l'eau distillée en jet ou goutte à goutte","Petit tube où l'on place un échantillon pour comparer les teintes","Récipient à bec verseur, gradué grossièrement, qui ne mesure pas un volume précis"];
+const A1O=["Balance","Bécher","Coupelle de pesée","Entonnoir à solide","Fiole jaugée","Pissette","Spatule","Tube à essais"];
+$('#a1 tbody').innerHTML=A1D.map((d,i)=>`<tr><td>${d}</td><td><select data-k="a1_${i}" data-label="A1 · ${esc(d)}" aria-label="Nom du matériel ${i+1}"><option value="">Choisir…</option>${A1O.map(o=>`<option>${o}</option>`).join('')}</select></td></tr>`).join('');
+
+/* ---------- listes à ordonner ---------- */
+const A2I={A:"Boucher la fiole et agiter doucement jusqu'à ce que toute la poudre soit dissoute.",B:"Poser la coupelle sur la balance, puis tarer.",C:"Compléter à la pissette, puis goutte à goutte, jusqu'à ce que le bas du ménisque affleure le trait de jauge, l'œil à sa hauteur.",D:"Verser la poudre dans la fiole jaugée à l'aide de l'entonnoir à solide.",E:"Boucher la fiole et la retourner plusieurs fois pour homogénéiser.",F:"Remplir la fiole d'eau distillée jusqu'à la moitié environ.",G:"Rincer la coupelle et l'entonnoir à l'eau distillée, au-dessus de la fiole.",H:"Prélever le sulfate de cuivre à la spatule jusqu'à afficher la masse calculée."};
+const B3I={S1:"S1 · 10 g/L",S2:"S2 · ? g/L",S3:"S3 · 30 g/L",S4:"S4 · ? g/L",S5:"S5 · 50 g/L"};
+const SORTS={a2:{items:A2I,def:["A","B","C","D","E","F","G","H"]},b3:{items:B3I,def:["S3","S1","S5","S2","S4"]}};
+function renderSort(id){
+  const S=SORTS[id]; const order=store[id]||S.def; const ol=$('#'+id);
+  ol.innerHTML=order.map((k,i)=>`<li draggable="true" data-key="${k}"><span class="pos">${i+1}.</span><span>${id==='a2'?`<span class="lt">${k}</span>`:''}${esc(S.items[k])}</span><span class="mv"><button class="b small" data-up="${i}" aria-label="Monter">▲</button><button class="b small" data-down="${i}" aria-label="Descendre">▼</button></span></li>`).join('');
+  ol.dataset.list=id;
+}
+function setOrder(id,order){ store[id]=order; renderSort(id); persist(); }
+function getOrder(id){ return store[id]||SORTS[id].def; }
+document.addEventListener('click',e=>{
+  const u=e.target.closest('[data-up],[data-down]'); if(!u) return;
+  const ol=u.closest('.sort'); const id=ol.dataset.list; const o=[...getOrder(id)];
+  const i=+(u.dataset.up??u.dataset.down), j=u.dataset.up!=null?i-1:i+1; if(j<0||j>=o.length) return;
+  [o[i],o[j]]=[o[j],o[i]]; setOrder(id,o); ol.querySelectorAll('button')[ (j*2)+(u.dataset.up!=null?0:1) ]?.focus();
+});
+// glisser (souris + tactile) par pointer events
+let drag=null;
+document.addEventListener('pointerdown',e=>{
+  const li=e.target.closest('.sort li'); if(!li||e.target.closest('button')) return;
+  drag={li,ol:li.parentElement,id:li.parentElement.dataset.list}; li.classList.add('drag'); li.setPointerCapture(e.pointerId);
+});
+document.addEventListener('pointermove',e=>{
+  if(!drag) return; const lis=[...drag.ol.children];
+  for(const o of lis){ if(o===drag.li) continue; const r=o.getBoundingClientRect();
+    if(e.clientY>r.top && e.clientY<r.bottom){ const before=e.clientY<r.top+r.height/2; drag.ol.insertBefore(drag.li, before?o:o.nextSibling); break; } }
+});
+document.addEventListener('pointerup',()=>{ if(!drag) return; drag.li.classList.remove('drag');
+  const o=[...drag.ol.children].map(l=>l.dataset.key); const id=drag.id; drag=null; setOrder(id,o); });
+document.addEventListener('dragstart',e=>{ if(e.target.closest('.sort')) e.preventDefault(); });
+
+/* ---------- A3 dessins ---------- */
+const STEPS=["La balance, la coupelle sur le plateau, l'affichage 0,00 g","La spatule, la poudre sur la coupelle, la masse affichée","L'entonnoir sur le col de la fiole jaugée, la poudre qui tombe","La pissette qui rince la coupelle et l'entonnoir au-dessus de la fiole","La fiole remplie à moitié environ, la poudre au fond","La fiole bouchée, une flèche d'agitation, la solution bleue","Zoom sur le col : trait de jauge, ménisque, œil à la bonne hauteur","La fiole bouchée retournée, une flèche courbe"];
+const COLS=[["#18202C","noir"],["#1E66C2","bleu"],["#7FB6EA","bleu clair"],["#B3362A","rouge"],["#9AA3AE","gris"]];
+const pads=[];
+$('#draws').innerHTML=STEPS.map((s,i)=>`<div class="dcard"><div class="dhead"><b>${i+1}</b><span>${s}</span></div>
+  <canvas width="800" height="600" id="cv${i}" aria-label="Cadre de dessin, étape ${i+1}"></canvas>
+  <div class="tools" data-pad="${i}">
+    <button data-tool="pen" aria-pressed="true">Crayon</button><button data-tool="erase" aria-pressed="false">Gomme</button><button data-tool="text" aria-pressed="false">Légende</button>
+    <input data-txt placeholder="mot à placer" aria-label="Texte de la légende étape ${i+1}">
+    ${COLS.map((c,k)=>`<button class="sw" data-col="${c[0]}" aria-pressed="${k===0}" aria-label="Couleur ${c[1]}" style="background:${c[0]}"></button>`).join('')}
+    <button data-size aria-label="Épaisseur">Trait fin</button><button data-undo>Annuler</button><button data-clear>Effacer</button>
+  </div></div>`).join('');
+function makePad(i){
+  const cv=$('#cv'+i), ctx=cv.getContext('2d'); const P={cv,ctx,tool:'pen',col:'#18202C',size:4,hist:[],down:false,last:null};
+  function blank(){ ctx.fillStyle='#fff'; ctx.fillRect(0,0,800,600); ctx.fillStyle='#DDE3EA'; ctx.font='bold 64px sans-serif'; ctx.fillText(String(i+1),18,70); }
+  blank();
+  const saved=(store.draw||{})[i];
+  if(saved){ const im=new Image(); im.onload=()=>ctx.drawImage(im,0,0,800,600); im.src=saved; }
+  const pt=e=>{ const r=cv.getBoundingClientRect(); return [(e.clientX-r.left)*800/r.width,(e.clientY-r.top)*600/r.height]; };
+  const snap=()=>{ P.hist.push(ctx.getImageData(0,0,800,600)); if(P.hist.length>25) P.hist.shift(); };
+  const commit=()=>{ store.draw=store.draw||{}; store.draw[i]=cv.toDataURL('image/png'); store.drawn=store.drawn||{}; store.drawn[i]=1; persist(); };
+  cv.addEventListener('pointerdown',e=>{
+    e.preventDefault(); const [x,y]=pt(e); snap();
+    if(P.tool==='text'){ const t=cv.parentElement.querySelector('[data-txt]').value.trim(); if(!t){ P.hist.pop(); cv.parentElement.querySelector('[data-txt]').focus(); return; }
+      ctx.fillStyle=P.col; ctx.font='600 30px sans-serif'; ctx.textBaseline='middle'; ctx.fillText(t,x,y); commit(); return; }
+    P.down=true; P.last=[x,y]; cv.setPointerCapture(e.pointerId);
+    ctx.beginPath(); ctx.fillStyle=P.tool==='erase'?'#fff':P.col; ctx.arc(x,y,(P.tool==='erase'?P.size*4:P.size)/2,0,7); ctx.fill();
+  });
+  cv.addEventListener('pointermove',e=>{ if(!P.down) return; const [x,y]=pt(e);
+    ctx.strokeStyle=P.tool==='erase'?'#fff':P.col; ctx.lineWidth=P.tool==='erase'?P.size*4:P.size; ctx.lineCap='round'; ctx.lineJoin='round';
+    ctx.beginPath(); ctx.moveTo(...P.last); ctx.lineTo(x,y); ctx.stroke(); P.last=[x,y]; });
+  const end=()=>{ if(P.down){ P.down=false; commit(); } };
+  cv.addEventListener('pointerup',end); cv.addEventListener('pointercancel',end);
+  P.undo=()=>{ const h=P.hist.pop(); if(h){ ctx.putImageData(h,0,0); commit(); } };
+  P.clear=()=>{ snap(); blank(); if(store.draw) delete store.draw[i]; if(store.drawn) delete store.drawn[i]; persist(); };
+  pads[i]=P;
+}
+STEPS.forEach((_,i)=>makePad(i));
+$('#draws').addEventListener('click',e=>{
+  const b=e.target.closest('button'); if(!b) return; const bar=b.closest('.tools'); const P=pads[+bar.dataset.pad];
+  if(b.dataset.tool){ P.tool=b.dataset.tool; bar.querySelectorAll('[data-tool]').forEach(x=>x.setAttribute('aria-pressed',x===b)); P.cv.style.cursor=P.tool==='text'?'text':'crosshair'; }
+  else if(b.dataset.col){ P.col=b.dataset.col; bar.querySelectorAll('[data-col]').forEach(x=>x.setAttribute('aria-pressed',x===b)); if(P.tool==='erase'){P.tool='pen'; bar.querySelectorAll('[data-tool]').forEach(x=>x.setAttribute('aria-pressed',x.dataset.tool==='pen'));} }
+  else if(b.hasAttribute('data-size')){ P.size = P.size===4?9:4; b.textContent = P.size===4?'Trait fin':'Trait épais'; }
+  else if(b.hasAttribute('data-undo')) P.undo();
+  else if(b.hasAttribute('data-clear')) P.clear();
+});
+
+/* ---------- A4 ---------- */
+const A4Q=["Pourquoi utilise-t-on une fiole jaugée et non un bécher pour préparer la solution ?","Pourquoi tare-t-on la balance avec la coupelle posée dessus ?","Pourquoi rince-t-on la coupelle et l'entonnoir au-dessus de la fiole ?","Pourquoi dissout-on la poudre dans une fiole à moitié pleine, avant de compléter jusqu'au trait ?","Dans le labo, placez l'œil au-dessus du trait, puis à sa hauteur. Que remarquez-vous ? Pourquoi lire avec l'œil à hauteur du trait ?","Si l'on dépasse le trait de jauge, peut-on retirer un peu de solution ? Que devient alors la concentration ?"];
+$('#a4').innerHTML=A4Q.map((q,i)=>`<label class="f" style="text-transform:none;letter-spacing:0;font-size:.95rem;color:var(--ink);font-weight:500">${i+1}. ${q}<textarea data-k="a4_${i}" data-label="A4.${i+1} · ${esc(q)}"></textarea></label>`).join('');
+
+/* ---------- C1 ---------- */
+$('#c1').innerHTML=[1,2,3,4,5].map(n=>`<tr><td><b>S${n}</b></td>
+  <td><select data-k="c1_v${n}" data-label="C1 · S${n} fiole" aria-label="S${n} fiole"><option value="">—</option><option>50,0</option><option>100,0</option></select></td>
+  <td><input class="num" data-k="c1_m${n}" data-label="C1 · S${n} masse affichée (g)" aria-label="S${n} masse" inputmode="decimal"></td>
+  <td><input data-k="c1_r${n}" data-label="C1 · S${n} remarques" aria-label="S${n} remarques" placeholder="aucune erreur…" style="width:100%"></td>
+  <td><input type="checkbox" data-k="c1_x${n}" data-label="C1 · S${n} refaite" aria-label="S${n} refaite"></td></tr>`).join('');
+
+/* ---------- C3 nuancier ---------- */
+const PAL=["#F2F8FE","#D7EAFA","#BCDCF6","#9FCCF2","#82BCEE","#64A9E8","#4895DE","#2F80D2","#1E6BC0","#155AA8","#0F478A"];
+$('#palette').innerHTML=PAL.map(c=>`<button style="background:${c}" data-pal="${c}" aria-label="Teinte ${c}"></button>`).join('')+`<label class="hint" style="display:flex;gap:6px;align-items:center">Autre <input type="color" id="pcol" value="#64A9E8"></label>`;
+const NT=6; let selTube=0;
+function renderNuancier(){
+  const n=store.nuancier||{};
+  $('#nuancier').innerHTML=Array.from({length:NT},(_,i)=>{ const t=n[i]||{}; const myst=i===NT-1;
+    return `<div class="nt ${myst?'myst':''}"><button class="tube" data-tube="${i}" aria-pressed="${i===selTube}" aria-label="Tube ${i+1}"><span style="background:${t.c||'transparent'}"></span></button>
+    <input data-nt="${i}" data-f="n" value="${esc(t.n|| (myst?'Bain 1912':''))}" placeholder="nom" aria-label="Nom du tube ${i+1}">
+    <input data-nt="${i}" data-f="g" value="${esc(t.g||'')}" placeholder="… g/L" aria-label="Concentration du tube ${i+1}"></div>`; }).join('');
+}
+function setTube(i,patch){ store.nuancier=store.nuancier||{}; store.nuancier[i]=Object.assign({},store.nuancier[i],patch); persist(); }
+$('#palette').addEventListener('click',e=>{ const b=e.target.closest('[data-pal]'); if(!b) return; setTube(selTube,{c:b.dataset.pal}); renderNuancier(); });
+$('#pcol').addEventListener('input',e=>{ setTube(selTube,{c:e.target.value}); renderNuancier(); });
+$('#nuancier').addEventListener('click',e=>{ const b=e.target.closest('[data-tube]'); if(!b) return; selTube=+b.dataset.tube; renderNuancier(); });
+$('#nuancier').addEventListener('input',e=>{ const t=e.target.closest('[data-nt]'); if(!t) return; setTube(+t.dataset.nt,{[t.dataset.f]:t.value}); });
+
+/* ---------- D1 ---------- */
+const D1T=["Le sulfate de cuivre est le ",0,", l'eau est le ",1,". En les mélangeant, on réalise une ",2," et on obtient une ",3,". Pour connaître précisément son ",4,", on utilise une ",5," que l'on remplit jusqu'au ",6,", puis on la retourne pour ",7,". La concentration en masse est le quotient de la ",8," de soluté par le volume de solution ; elle s'exprime en ",9,"."];
+const D1W=["dissolution","fiole jaugée","g/L","homogénéiser","masse","solution","soluté","solvant","trait de jauge","volume"];
+$('#d1').innerHTML=D1T.map(x=>typeof x==='number'?`<select data-k="d1_${x}" data-label="D1 · trou ${x+1}" data-a="d1_${x}" aria-label="Trou ${x+1}"><option value="">……</option>${D1W.map(w=>`<option>${w}</option>`).join('')}</select>`:esc(x)).join('');
+
+/* ---------- liaison des champs ---------- */
+function bindFields(){
+  $$('[data-k]').forEach(el=>{
+    const k=el.dataset.k;
+    if(el.type==='radio'){ if(store[k]===el.value) el.checked=true; }
+    else if(el.type==='checkbox'){ el.checked=!!store[k]; }
+    else if(store[k]!=null) el.value=store[k];
+    el.addEventListener(el.tagName==='SELECT'||el.type==='radio'||el.type==='checkbox'?'change':'input',()=>{
+      if(el.type==='radio'){ if(el.checked) store[k]=el.value; } else if(el.type==='checkbox') store[k]=el.checked; else store[k]=el.value;
+      mark(el,null); persist(); });
+  });
+}
+
+/* ---------- vérifications ---------- */
+function chkNum(el,good,tol){ const v=num(el.value); const ok=!isNaN(v)&&Math.abs(v-good)<=tol; mark(el,ok); return ok; }
+const CHECK={
+  a1(){ let n=0; A1D.forEach((_,i)=>{ const el=$(`[data-k="a1_${i}"]`); const ok=el.value===ANS.a1[i]; mark(el,el.value?ok:false); if(ok)n++; }); fb('a1',n===8, n===8?'Tout est juste.':`${n} / 8 justes. Les cases rouges sont à revoir.`); },
+  a2(){ const o=getOrder('a2'); let n=0; [...$('#a2').children].forEach((li,i)=>{ const ok=o[i]===ANS.a2[i]; mark(li,ok); if(ok)n++; }); fb('a2',n===8, n===8?'Ordre correct : c\'est le protocole de dissolution.':`${n} / 8 gestes à la bonne place.`); },
+  b1(){ let n=0; ANS.b1.forEach((g,i)=>{ if(chkNum($(`[data-k="b1_${i}"]`),g,g*0.002)) n++; }); fb('b1',n===4, n===4?'Conversions justes.':`${n} / 4. Rappel : 1 L = 1 000 mL.`); },
+  b2(){ let n=0,t=0; for(const k in ANS.b2){ t++; const g=ANS.b2[k]; if(chkNum($(`[data-k="${k}"]`),g,g*0.011)) n++; } fb('b2',n===t, n===t?'Toute la commande est juste.':`${n} / ${t} cases justes. Vérifiez la conversion du volume en litres.`); },
+  b3(){ const o=getOrder('b3'); let n=0; [...$('#b3').children].forEach((li,i)=>{ const ok=o[i]===ANS.b3[i]; mark(li,ok); if(ok)n++; }); fb('b3',n===5, n===5?'Prévision juste.':`${n} / 5 à la bonne place. Calculez d'abord C(S2) et C(S4) en B2.`); },
+  b4(){ const ok=store.b4===ANS.b4; fb('b4',ok, ok?'Exact. Reste à le justifier par un calcul.':'Ce n\'est pas ça : comparez les volumes, puis calculez les deux concentrations.'); },
+  b5(){ const a=chkNum($('[data-k="b5"]'),ANS.b5,0.3); const s=$('[data-k="b5_t"]'); const b=s.value===ANS.b5_t; mark(s,b); fb('b5',a&&b, a&&b?'Exact.':'Quelle masse est réellement dissoute ?'); },
+  c4(){ const a=chkNum($('[data-k="c4_a"]'),ANS.c4[0],0.01), b=chkNum($('[data-k="c4_b"]'),ANS.c4[1],0.01); fb('c4',a&&b, a&&b?'Encadrement correct.':'Placez le tube « Bain 1912 » dans le nuancier du labo : entre quels tubes se trouve-t-il ?'); },
+  c5(){ const c=num(store.c5_c), v=num(store.c5_v), m=num(store.c5_m); const el=$('[data-k="c5_m"]');
+    if(isNaN(c)||isNaN(v)) return fb('c5',false,'Choisissez d\'abord une concentration et une fiole.');
+    const g=c*v/1000; const ok=!isNaN(m)&&Math.abs(m-g)<=Math.max(0.011,g*0.01); mark(el,ok);
+    const inside = !isNaN(num(store.c4_a)) && !isNaN(num(store.c4_b)) ? (c>num(store.c4_a) && c<num(store.c4_b)) : true;
+    fb('c5',ok&&inside, !ok?'Masse incorrecte : m = Cm × V, avec V en litres.' : inside?'Calcul juste. Préparez S6 dans le labo et comparez.':'Calcul juste, mais votre concentration n\'est pas entre vos deux bornes.'); },
+  c6(){ const a=chkNum($('[data-k="c6_c"]'),ANS.c6,2.01); const c=num(store.c6_c); const b=chkNum($('[data-k="c6_m"]'),(isNaN(c)?ANS.c6:c)*2,0.6);
+    fb('c6',a&&b, a&&b?'Bravo, vous avez retrouvé le bleu de 1912.':!a?'Votre estimation ne correspond pas au bain : refaites la comparaison avec S6.':'La masse pour 2,0 L : m = Cm × V.'); },
+  d1(){ let n=0; ANS.d1.forEach((w,i)=>{ const el=$(`[data-k="d1_${i}"]`); const ok=el.value===w; mark(el,ok); if(ok)n++; }); fb('d1',n===10, n===10?'Texte complet et juste.':`${n} / 10 trous justes.`); }
+};
+document.addEventListener('click',e=>{ const b=e.target.closest('[data-check]'); if(b) CHECK[b.dataset.check](); });
+
+/* ---------- progression et récapitulatif ---------- */
+function fieldsDone(){
+  const keys=new Set($$('[data-k]').map(e=>e.dataset.k).filter(k=>!/^c1_x|^plus$|^nom$|^prenom$|^classe$/.test(k)));
+  let total=keys.size+8+NT+2, done=0;
+  keys.forEach(k=>{ const v=store[k]; if(v!=null && v!=='' && v!==false) done++; });
+  done+=Object.keys(store.drawn||{}).length;
+  const n=store.nuancier||{}; for(let i=0;i<NT;i++) if(n[i]&&n[i].c) done++;
+  if(store.a2) done++; if(store.b3) done++;
+  return [done,total];
+}
+function progress(){ const [d,t]=fieldsDone(); const p=Math.round(100*d/t); $('#pfill').style.width=p+'%'; $('#ptxt').textContent=p+' %'; }
+function recap(){ const [d,t]=fieldsDone(); const dr=Object.keys(store.drawn||{}).length;
+  $('#recap').innerHTML=`Vous avez répondu à <b>${d}</b> éléments sur <b>${t}</b>, dont <b>${dr}</b> dessin${dr>1?'s':''} sur 8. ${(store.nom&&store.prenom)?'':'<br><b>Pensez à écrire votre nom et votre prénom en haut de la fiche.</b>'}`; }
+
+/* ---------- export ---------- */
+function answersList(){
+  const seen=new Set(), out=[];
+  $$('[data-k]').forEach(el=>{ const k=el.dataset.k; if(seen.has(k)) return; seen.add(k);
+    let v=store[k]; if(v===true) v='oui'; if(v===false||v==null||v==='') v='—';
+    const lbl=el.dataset.label || ($$(`[data-k="${k}"]`).find(x=>x.dataset.label)||{}).dataset?.label || k;
+    out.push([lbl,String(v)]); });
+  return out;
+}
+function textExport(){
+  const L=answersList(); const lines=['LE BLEU DE ROUBAIX · '+(store.prenom||'')+' '+(store.nom||'')+' · '+(store.classe||''),''];
+  L.forEach(([l,v])=>{ if(!/^(Nom|Prénom|Classe)$/.test(l)) lines.push(l+' : '+v); });
+  lines.push('A2 · Ordre des gestes : '+getOrder('a2').join(' – '));
+  lines.push('B3 · Ordre prévu : '+getOrder('b3').join(' < '));
+  const n=store.nuancier||{}; lines.push('C3 · Nuancier : '+Array.from({length:NT},(_,i)=>(n[i]?.n||(i===NT-1?'Bain 1912':'?'))+' ('+(n[i]?.g||'…')+')').join(' | '));
+  return lines.join('\n');
+}
+function htmlExport(){
+  const L=answersList().filter(([l])=>!/^(Nom|Prénom|Classe)$/.test(l));
+  const n=store.nuancier||{};
+  const tubes=Array.from({length:NT},(_,i)=>`<div style="display:inline-block;text-align:center;margin:0 8px;width:80px"><div style="width:30px;height:110px;margin:auto;border:2px solid #7C8794;border-top:0;border-radius:0 0 15px 15px;background:linear-gradient(to top, ${n[i]?.c||'#fff'} 70%, #fff 70%)"></div><div style="font-size:12px;font-weight:700">${esc(n[i]?.n||(i===NT-1?'Bain 1912':''))}</div><div style="font-size:12px">${esc(n[i]?.g||'')}</div></div>`).join('');
+  const draws=STEPS.map((s,i)=>`<figure style="margin:0;border:1px solid #C6CED8"><img src="${pads[i].cv.toDataURL('image/png')}" style="width:100%;display:block" alt="Étape ${i+1}"><figcaption style="font-size:12px;padding:4px 6px">${i+1}. ${esc(s)}</figcaption></figure>`).join('');
+  const rows=L.map(([l,v])=>`<tr><td style="padding:5px 8px;border-bottom:1px solid #ddd;width:45%;color:#5A6573">${esc(l)}</td><td style="padding:5px 8px;border-bottom:1px solid #ddd;white-space:pre-wrap">${esc(v)}</td></tr>`).join('');
+  return `<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Bleu de Roubaix · ${esc(store.prenom||'')} ${esc(store.nom||'')}</title></head>
+<body style="font-family:Segoe UI,system-ui,sans-serif;color:#18202C;max-width:900px;margin:24px auto;padding:0 16px">
+<p style="font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:#5A6573">ESAAT Roubaix · Seconde · Concentration en masse</p>
+<h1 style="margin:4px 0">Le Bleu de Roubaix</h1>
+<p><b>${esc(store.prenom||'')} ${esc(store.nom||'')}</b> · ${esc(store.classe||'')} · rendu le ${new Date().toLocaleString('fr-FR')}</p>
+<h2>A2 · Ordre des gestes</h2><p style="font-size:20px;font-weight:700">${getOrder('a2').join(' – ')}</p>
+<h2>A3 · Schémas du protocole</h2><div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px">${draws}</div>
+<h2>B3 · Ordre prévu des teintes</h2><p>${getOrder('b3').join(' &lt; ')}</p>
+<h2>C3 · Nuancier</h2><div style="background:#fff;border:1px solid #ddd;padding:14px;overflow-x:auto;white-space:nowrap">${tubes}</div>
+<h2>Réponses</h2><table style="border-collapse:collapse;width:100%;font-size:14px">${rows}</table>
+</body></html>`;
+}
+let downloads=null;
+const STANDALONE = !(window.claude && window.claude.use);
+(async()=>{ if(STANDALONE) return; try{ downloads = await window.claude.use('downloads'); }catch(e){ downloads=null; } if(!downloads) $('#dl').hidden=true; })();
+function blobSave(name,data){ const u=URL.createObjectURL(new Blob([data],{type:'text/html'})); const a=document.createElement('a'); a.href=u; a.download=name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(u),4000); }
+$('#dl').addEventListener('click',async()=>{
+  const name='Bleu_de_Roubaix_'+((store.nom||'NOM')+'_'+(store.prenom||'Prenom')).normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^A-Za-z0-9_-]+/g,'_')+'.html';
+  if(STANDALONE){ try{ blobSave(name,htmlExport()); fb('dl',true,'Copie enregistrée dans vos téléchargements : déposez-la sur Pronote.'); }catch(e){ fb('dl',false,'Enregistrement impossible ici : utilisez « Copier mes réponses ».'); } return; }
+  if(!downloads){ fb('dl',false,'Enregistrement indisponible ici : utilisez « Copier mes réponses ».'); return; }
+  try{ await downloads.save({filename:name,data:htmlExport()}); fb('dl',true,'Copie enregistrée : déposez-la sur Pronote.'); }
+  catch(err){ const c=err&&err.code; fb('dl',false, c==='declined'?'Enregistrement annulé.': c==='rate_limited'?'Une fenêtre d\'enregistrement est déjà ouverte.':'Enregistrement impossible ici : utilisez « Copier mes réponses ».'); if(c==='unavailable'||c==='not_granted'){ $('#dl').hidden=true; } }
+});
+$('#copy').addEventListener('click',async()=>{
+  const t=textExport();
+  try{ await navigator.clipboard.writeText(t); fb('dl',true,'Réponses copiées : collez-les dans un document ou dans Pronote.'); }
+  catch(e){ const ta=document.createElement('textarea'); ta.value=t; ta.style.minHeight='220px'; $('#copy').closest('.done').appendChild(ta); ta.select(); fb('dl',false,'Copie automatique refusée : le texte est sélectionné ci-dessous, copiez-le (Ctrl+C).'); }
+});
+
+renderSort('a2'); renderSort('b3'); renderNuancier(); bindFields(); progress(); recap();
+})();
+</script>
+</body></html>
