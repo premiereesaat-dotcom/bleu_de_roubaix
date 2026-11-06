@@ -342,6 +342,7 @@ footer{font-size:.8rem;color:var(--muted);text-align:center}
         <div class="row">
           <button class="b main" id="dl">Enregistrer ma copie (fichier HTML)</button>
           <button class="b" id="copy">Copier mes réponses (texte)</button>
+          <button class="b" id="wipe" style="border-color:var(--brick);color:var(--brick);background:transparent">Effacer toutes mes réponses</button>
           <span class="fb" id="fb-dl"></span>
         </div>
         <p class="hint">Déposez le fichier enregistré dans le travail à faire sur Pronote, puis répondez au QCM « Le Bleu de Roubaix » (toutes les questions sont obligatoires). Si l'enregistrement n'est pas possible sur votre appareil, copiez vos réponses dans un document et faites des captures d'écran de vos dessins et de votre nuancier.</p>
@@ -359,7 +360,8 @@ footer{font-size:.8rem;color:var(--muted);text-align:center}
 (function(){
 const ANS = JSON.parse(decodeURIComponent(escape(atob("eyJhMSI6IFsiQ291cGVsbGUgZGUgcGVzw6llIiwgIkJhbGFuY2UiLCAiU3BhdHVsZSIsICJFbnRvbm5vaXIgw6Agc29saWRlIiwgIkZpb2xlIGphdWfDqWUiLCAiUGlzc2V0dGUiLCAiVHViZSDDoCBlc3NhaXMiLCAiQsOpY2hlciJdLCAiYTIiOiBbIkIiLCAiSCIsICJEIiwgIkciLCAiRiIsICJBIiwgIkMiLCAiRSJdLCAiYjEiOiBbMC4xLCAwLjA1LCAwLjI1LCA1MDBdLCAiYjIiOiB7ImIyX3YxIjogMC4xLCAiYjJfbTEiOiAxLCAiYjJfYzIiOiAyMCwgImIyX3YyIjogMC4wNSwgImIyX3YzIjogMC4wNSwgImIyX20zIjogMS41LCAiYjJfYzQiOiA0MCwgImIyX3Y0IjogMC4xLCAiYjJfdjUiOiAwLjEsICJiMl9tNSI6IDV9LCAiYjMiOiBbIlMxIiwgIlMyIiwgIlMzIiwgIlM0IiwgIlM1Il0sICJiNCI6ICJTMiBwbHVzIGZvbmPDqWUiLCAiYjUiOiAyOSwgImI1X3QiOiAicGx1cyBjbGFpcmUgcXVlIHByw6l2dSIsICJjNCI6IFsyMCwgMzBdLCAiYzYiOiAyNSwgImQxIjogWyJzb2x1dMOpIiwgInNvbHZhbnQiLCAiZGlzc29sdXRpb24iLCAic29sdXRpb24iLCAidm9sdW1lIiwgImZpb2xlIGphdWfDqWUiLCAidHJhaXQgZGUgamF1Z2UiLCAiaG9tb2fDqW7DqWlzZXIiLCAibWFzc2UiLCAiZy9MIl19"))));
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
-const LS='bleu-roubaix-fiche-v1';
+const LS='bleu-roubaix-fiche-v2';
+try{ localStorage.removeItem('bleu-roubaix-fiche-v1'); }catch(e){}
 let store={}; try{ store=JSON.parse(localStorage.getItem(LS)||'{}')||{}; }catch(e){ store={}; }
 let saveT=null;
 function persist(){ clearTimeout(saveT); saveT=setTimeout(()=>{ try{ localStorage.setItem(LS,JSON.stringify(store)); $('#saved').textContent='Enregistré sur cet appareil · '+new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'}); }catch(e){ $('#saved').textContent='Enregistrement impossible sur cet appareil : pensez à enregistrer votre copie.'; } progress(); recap(); },250); }
@@ -592,6 +594,13 @@ $('#copy').addEventListener('click',async()=>{
   catch(e){ const ta=document.createElement('textarea'); ta.value=t; ta.style.minHeight='220px'; $('#copy').closest('.done').appendChild(ta); ta.select(); fb('dl',false,'Copie automatique refusée : le texte est sélectionné ci-dessous, copiez-le (Ctrl+C).'); }
 });
 
+let wipeT=null;
+$('#wipe').addEventListener('click',()=>{ const b=$('#wipe');
+  if(!b.dataset.armed){ b.dataset.armed='1'; b.textContent='Confirmer : tout effacer ?'; b.style.background='var(--brick)'; b.style.color='var(--surface)';
+    fb('dl',false,'Attention : réponses, dessins et nuancier seront effacés. Cliquez une seconde fois pour confirmer.');
+    clearTimeout(wipeT); wipeT=setTimeout(()=>{ delete b.dataset.armed; b.textContent='Effacer toutes mes réponses'; b.style.background='transparent'; b.style.color='var(--brick)'; },5000); return; }
+  clearTimeout(wipeT); store={}; try{ localStorage.removeItem(LS); }catch(e){}
+  location.reload(); });
 renderSort('a2'); renderSort('b3'); renderNuancier(); bindFields(); progress(); recap();
 })();
 </script>
